@@ -2,6 +2,7 @@ import osmnx as ox
 import heapq
 import time
 import math
+import folium
 
 start_time = time.time()
 starting = time.time()
