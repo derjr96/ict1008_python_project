@@ -1,8 +1,11 @@
+from flask import Flask, render_template
+import folium
+from collections import deque, namedtuple
+import pandas as pd
 import osmnx as ox
 import heapq
 import time
 import math
-import folium
 
 start_time = time.time()
 starting = time.time()
@@ -105,7 +108,16 @@ estimatewalktime = totaldist / (1.4 * 60)
 print("Time: " + str(round(estimatewalktime)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
 
 # plotting map to folium
-# m = folium.Map(location=punggol)
 m = ox.plot_route_folium(G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
-
 m.save('templates/astar_walking.html')
+
+'''
+FLASK IS HERE FLASK IS HERE FLASK IS HERE FLASK IS HERE
+'''
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
