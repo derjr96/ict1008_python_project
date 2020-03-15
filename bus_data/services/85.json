@@ -1,0 +1,102 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "85",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "0.6",
+            "StopSequence": "2",
+            "BusStopCode": "65221",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "0.9",
+            "StopSequence": "3",
+            "BusStopCode": "65281",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "1.4",
+            "StopSequence": "4",
+            "BusStopCode": "65271",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "2",
+            "StopSequence": "5",
+            "BusStopCode": "65261",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "2.5",
+            "StopSequence": "6",
+            "BusStopCode": "65239",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "2.9",
+            "StopSequence": "7",
+            "BusStopCode": "65529",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "15.2",
+            "StopSequence": "26",
+            "BusStopCode": "65521",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "15.7",
+            "StopSequence": "27",
+            "BusStopCode": "65231",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "16.1",
+            "StopSequence": "28",
+            "BusStopCode": "65269",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "16.6",
+            "StopSequence": "29",
+            "BusStopCode": "65279",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "17.1",
+            "StopSequence": "30",
+            "BusStopCode": "65289",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "17.4",
+            "StopSequence": "31",
+            "BusStopCode": "65229",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "85",
+            "Distance": "17.9",
+            "StopSequence": "32",
+            "BusStopCode": "65009",
+            "Direction": "2"
+        }
+    ]
+}

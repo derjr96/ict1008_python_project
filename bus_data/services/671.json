@@ -1,0 +1,32 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "671",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65011",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "671",
+            "Distance": "2",
+            "StopSequence": "7",
+            "BusStopCode": "65809",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "671",
+            "Distance": "21",
+            "StopSequence": "9",
+            "BusStopCode": "65801",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "671",
+            "Distance": "23.2",
+            "StopSequence": "15",
+            "BusStopCode": "65019",
+            "Direction": "2"
+        }
+    ]
+}

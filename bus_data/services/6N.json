@@ -1,0 +1,109 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "6N",
+            "Distance": "28.5",
+            "StopSequence": "48",
+            "BusStopCode": "65021",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "28.9",
+            "StopSequence": "49",
+            "BusStopCode": "65031",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "29.2",
+            "StopSequence": "50",
+            "BusStopCode": "65041",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "29.8",
+            "StopSequence": "51",
+            "BusStopCode": "65061",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "30.3",
+            "StopSequence": "52",
+            "BusStopCode": "65071",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "30.7",
+            "StopSequence": "53",
+            "BusStopCode": "65151",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "31",
+            "StopSequence": "54",
+            "BusStopCode": "65161",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "31.5",
+            "StopSequence": "55",
+            "BusStopCode": "65171",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "32.1",
+            "StopSequence": "56",
+            "BusStopCode": "65231",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "32.5",
+            "StopSequence": "57",
+            "BusStopCode": "65269",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "33",
+            "StopSequence": "58",
+            "BusStopCode": "65279",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "33.5",
+            "StopSequence": "59",
+            "BusStopCode": "65289",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "33.8",
+            "StopSequence": "60",
+            "BusStopCode": "65229",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "34.1",
+            "StopSequence": "61",
+            "BusStopCode": "65219",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "6N",
+            "Distance": "34.5",
+            "StopSequence": "62",
+            "BusStopCode": "65201",
+            "Direction": "1"
+        }
+    ]
+}

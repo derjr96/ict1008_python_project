@@ -1,0 +1,32 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "80",
+            "Distance": "1.3",
+            "StopSequence": "4",
+            "BusStopCode": "65029",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "80",
+            "Distance": "1.8",
+            "StopSequence": "5",
+            "BusStopCode": "65019",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "80",
+            "Distance": "21.4",
+            "StopSequence": "55",
+            "BusStopCode": "65011",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "80",
+            "Distance": "21.8",
+            "StopSequence": "56",
+            "BusStopCode": "65021",
+            "Direction": "2"
+        }
+    ]
+}

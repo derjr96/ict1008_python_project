@@ -1,0 +1,130 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "50",
+            "Distance": "11.3",
+            "StopSequence": "31",
+            "BusStopCode": "65801",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "15.1",
+            "StopSequence": "41",
+            "BusStopCode": "65521",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "15.6",
+            "StopSequence": "42",
+            "BusStopCode": "65231",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "15.9",
+            "StopSequence": "43",
+            "BusStopCode": "65181",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "16.3",
+            "StopSequence": "44",
+            "BusStopCode": "65321",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "16.8",
+            "StopSequence": "45",
+            "BusStopCode": "65311",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "17.3",
+            "StopSequence": "46",
+            "BusStopCode": "65301",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "18",
+            "StopSequence": "47",
+            "BusStopCode": "65351",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "18.5",
+            "StopSequence": "48",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65009",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "0.6",
+            "StopSequence": "2",
+            "BusStopCode": "65359",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "1.3",
+            "StopSequence": "3",
+            "BusStopCode": "65309",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "1.8",
+            "StopSequence": "4",
+            "BusStopCode": "65319",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "2.3",
+            "StopSequence": "5",
+            "BusStopCode": "65329",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "2.8",
+            "StopSequence": "6",
+            "BusStopCode": "65189",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "3.2",
+            "StopSequence": "7",
+            "BusStopCode": "65239",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "3.6",
+            "StopSequence": "8",
+            "BusStopCode": "65529",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "50",
+            "Distance": "7.4",
+            "StopSequence": "18",
+            "BusStopCode": "65809",
+            "Direction": "2"
+        }
+    ]
+}

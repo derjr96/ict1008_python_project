@@ -1,0 +1,95 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "382W",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "0.6",
+            "StopSequence": "2",
+            "BusStopCode": "65359",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "0.9",
+            "StopSequence": "3",
+            "BusStopCode": "65489",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "1.7",
+            "StopSequence": "4",
+            "BusStopCode": "65469",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "2.2",
+            "StopSequence": "5",
+            "BusStopCode": "65459",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "2.5",
+            "StopSequence": "6",
+            "BusStopCode": "65449",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "2.9",
+            "StopSequence": "7",
+            "BusStopCode": "65499",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "3.3",
+            "StopSequence": "8",
+            "BusStopCode": "65539",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "3.7",
+            "StopSequence": "9",
+            "BusStopCode": "65549",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "3.9",
+            "StopSequence": "10",
+            "BusStopCode": "65559",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "4.5",
+            "StopSequence": "11",
+            "BusStopCode": "65339",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "4.8",
+            "StopSequence": "12",
+            "BusStopCode": "65349",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382W",
+            "Distance": "5.3",
+            "StopSequence": "13",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        }
+    ]
+}

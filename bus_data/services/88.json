@@ -1,0 +1,95 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "88",
+            "Distance": "7",
+            "StopSequence": "9",
+            "BusStopCode": "65191",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "7.4",
+            "StopSequence": "10",
+            "BusStopCode": "65069",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "7.7",
+            "StopSequence": "11",
+            "BusStopCode": "65059",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "8.1",
+            "StopSequence": "12",
+            "BusStopCode": "65049",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "8.4",
+            "StopSequence": "13",
+            "BusStopCode": "65039",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "8.7",
+            "StopSequence": "14",
+            "BusStopCode": "65029",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "9.2",
+            "StopSequence": "15",
+            "BusStopCode": "65019",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "14.6",
+            "StopSequence": "37",
+            "BusStopCode": "65011",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "15",
+            "StopSequence": "38",
+            "BusStopCode": "65021",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "15.4",
+            "StopSequence": "39",
+            "BusStopCode": "65031",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "15.7",
+            "StopSequence": "40",
+            "BusStopCode": "65041",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "16.3",
+            "StopSequence": "41",
+            "BusStopCode": "65061",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "88",
+            "Distance": "16.9",
+            "StopSequence": "42",
+            "BusStopCode": "65199",
+            "Direction": "2"
+        }
+    ]
+}

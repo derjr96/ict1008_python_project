@@ -1,0 +1,158 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "83",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "0.6",
+            "StopSequence": "2",
+            "BusStopCode": "65221",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "0.9",
+            "StopSequence": "3",
+            "BusStopCode": "65281",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "1.4",
+            "StopSequence": "4",
+            "BusStopCode": "65271",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "2",
+            "StopSequence": "5",
+            "BusStopCode": "65261",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "2.5",
+            "StopSequence": "6",
+            "BusStopCode": "65239",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "3.1",
+            "StopSequence": "7",
+            "BusStopCode": "65179",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "3.5",
+            "StopSequence": "8",
+            "BusStopCode": "65169",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "4",
+            "StopSequence": "9",
+            "BusStopCode": "65159",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "4.3",
+            "StopSequence": "10",
+            "BusStopCode": "65079",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "4.8",
+            "StopSequence": "11",
+            "BusStopCode": "65069",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "8.9",
+            "StopSequence": "21",
+            "BusStopCode": "65061",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "9.4",
+            "StopSequence": "22",
+            "BusStopCode": "65071",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "9.8",
+            "StopSequence": "23",
+            "BusStopCode": "65151",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "10.1",
+            "StopSequence": "24",
+            "BusStopCode": "65161",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "10.6",
+            "StopSequence": "25",
+            "BusStopCode": "65171",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "11.2",
+            "StopSequence": "26",
+            "BusStopCode": "65231",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "11.6",
+            "StopSequence": "27",
+            "BusStopCode": "65269",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "12.1",
+            "StopSequence": "28",
+            "BusStopCode": "65279",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "12.6",
+            "StopSequence": "29",
+            "BusStopCode": "65289",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "12.9",
+            "StopSequence": "30",
+            "BusStopCode": "65229",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "83",
+            "Distance": "13.4",
+            "StopSequence": "31",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        }
+    ]
+}

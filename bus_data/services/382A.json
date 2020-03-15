@@ -1,0 +1,53 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "382A",
+            "Distance": "0",
+            "StopSequence": "1",
+            "BusStopCode": "65009",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "0.6",
+            "StopSequence": "2",
+            "BusStopCode": "65341",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "0.9",
+            "StopSequence": "3",
+            "BusStopCode": "65331",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "1.2",
+            "StopSequence": "4",
+            "BusStopCode": "65571",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "1.5",
+            "StopSequence": "5",
+            "BusStopCode": "65551",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "1.8",
+            "StopSequence": "6",
+            "BusStopCode": "65541",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "382A",
+            "Distance": "2.2",
+            "StopSequence": "7",
+            "BusStopCode": "65531",
+            "Direction": "1"
+        }
+    ]
+}

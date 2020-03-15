@@ -1,0 +1,18 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "110",
+            "Distance": "4.7",
+            "StopSequence": "11",
+            "BusStopCode": "65199",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "110",
+            "Distance": "35.4",
+            "StopSequence": "20",
+            "BusStopCode": "65191",
+            "Direction": "1"
+        }
+    ]
+}

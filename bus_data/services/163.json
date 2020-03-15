@@ -1,0 +1,46 @@
+{
+    "BusService": [
+        {
+            "ServiceNo": "163",
+            "Distance": "1.1",
+            "StopSequence": "4",
+            "BusStopCode": "65049",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "163",
+            "Distance": "1.4",
+            "StopSequence": "5",
+            "BusStopCode": "65039",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "163",
+            "Distance": "1.7",
+            "StopSequence": "6",
+            "BusStopCode": "65029",
+            "Direction": "1"
+        },
+        {
+            "ServiceNo": "163",
+            "Distance": "17.7",
+            "StopSequence": "44",
+            "BusStopCode": "65021",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "163",
+            "Distance": "18.1",
+            "StopSequence": "45",
+            "BusStopCode": "65031",
+            "Direction": "2"
+        },
+        {
+            "ServiceNo": "163",
+            "Distance": "18.4",
+            "StopSequence": "46",
+            "BusStopCode": "65041",
+            "Direction": "2"
+        }
+    ]
+}
