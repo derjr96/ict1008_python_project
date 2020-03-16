@@ -44,6 +44,8 @@ def astar(start_point, end_point):
     path = []
     routeQueue = []
 
+    # orginal heuristic distance from start to end point
+    disth = heuristic(latlon(start_point), latlon(end_point))
     # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
     heapq.heappush(routeQueue, (0, 0, None, start_point))
     closepath[start_point] = None
@@ -70,7 +72,7 @@ def astar(start_point, end_point):
                 else:
                     h = heuristic(latlon(edgeList[i][0][1]), latlon(end_point))
                     cur_length = edgeList[i][1].get('length')
-                    if h < starting:
+                    if h < disth:
                         heapq.heappush(routeQueue,
                                        ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], edgeList[i][0][1]))
                         # adding previous path to close path dict to prevent an infinite loop of short path
@@ -100,6 +102,9 @@ for i in range(0, len(nodeList)):
         startosmid = nodeList[i].get("osmid")
     if (nodeList[i].get("x") == end[0]) and (nodeList[i].get("y") == end[1]):
         endosmid = nodeList[i].get("osmid")
+
+# testing algorithmn speed
+start_time = time.time()
 
 final = astar(startosmid, endosmid)
 print("--- %s seconds ---" % (time.time() - start_time))

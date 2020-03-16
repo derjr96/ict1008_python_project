@@ -7,19 +7,13 @@ import heapq
 import time
 import math
 
-start_time = time.time()
-starting = time.time()
-ending = time.time()
 
 
-# retrieving lat/lon coords via OSMID
+# retrieving lat/lon coordinates via OSMID
 def latlon(osmid):
-    for i in range(0, len(nodeList)):
-        if nodeList[i].get("osmid") == osmid:
-            lat = nodeList[i].get("x")
-            lon = nodeList[i].get("y")
-    coord = (lat, lon)
-    return coord
+    for k in nodeList:
+        if k.get("osmid") == osmid:
+            return k.get("x"), k.get("y")
 
 
 # calculating heuristic between two lat/lon points
@@ -42,16 +36,16 @@ def heuristic(start, end):
 def astar(start_point, end_point):
     closepath = {}
     path = []
-    routeQueue = []
+    routeq = []
     finalret = []
 
     # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
-    heapq.heappush(routeQueue, (0, 0, None, start_point))
+    heapq.heappush(routeq, (0, 0, None, start_point))
     closepath[start_point] = None
 
     while True:
-        temp = heapq.heappop(routeQueue)
-        # print(temp[0], temp[1], temp[2])
+        temp = heapq.heappop(routeq)
+        # check if we reach end point node
         if temp[3] == end_point:
             path.append(temp[3])
             rear = temp[2]
@@ -60,25 +54,24 @@ def astar(start_point, end_point):
             while rear is not None:
                 path.append(rear)
                 rear = closepath.get(rear)
+
             # reverse the path list into start to end
             path = path[::-1]
-
             finalret.append(path)
             finalret.append(temp[1])
             return finalret
-
-        for i in range(0, len(edgeList)):
-            if edgeList[i][0][0] == temp[3]:
-                if edgeList[i][0][1] in closepath:
-                    continue
-                else:
-                    h = heuristic(latlon(edgeList[i][0][1]), latlon(end_point))
-                    cur_length = edgeList[i][1].get('length')
-                    if h < starting:
-                        heapq.heappush(routeQueue,
-                                       ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], edgeList[i][0][1]))
+        else:
+            for i in edgeList:
+                if i[0][0] == temp[3]:
+                    if i[0][1] in closepath:
+                        continue
+                    else:
+                        h = heuristic(latlon(i[0][1]), latlon(end_point))
+                        cur_length = i[1].get('length')
+                        heapq.heappush(routeq,
+                                       ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
                         # adding previous path to close path dict to prevent an infinite loop of short path
-                        closepath[edgeList[i][0][1]] = temp[3]
+                        closepath[i[0][1]] = temp[3]
 
 
 # main code
@@ -87,25 +80,28 @@ distance = 2000
 G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
 # storing all nodes into a list
-nodeList = list(G_walk.nodes.values())
+nodeList = list(G_walk.nodes.values())  # unrequired
 edgeList = list(G_walk.edges.items())
 
 # user input (GUI TEAM, user input in text area will be stored here)
-startstring = "32 Punggol East, Singapore 828824" # punggol will return punggol mrt coordinates
-endstring = "94 punggol central, Singapore 828724"  #random hdb
-startpoint = ox.geocode(startstring)
-endpoint = ox.geocode(endstring)
+src = "32 Punggol East, Singapore 828824"  # punggol will return punggol mrt coordinates
+des = "94 punggol central, Singapore 828724"  # random hdb
+startpoint = ox.geocode(src)
+endpoint = ox.geocode(des)
 
 startosmid = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
 endosmid = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
 
+# testing algorithmn speed
+start_time = time.time()
+
 final = astar(startosmid[0], endosmid[0])
-print("--- %s seconds ---" % (time.time() - start_time))
+print("--- %s seconds ---" % round((time.time() - start_time), 2))
 
 # calculating estimated time to reach the destination taking avg human walking speed of 1.4m/s
 totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
-estimatewalktime = totaldist / (1.4 * 60)
-print("Time: " + str(round(estimatewalktime)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
+estwalk = totaldist / (1.4 * 60)
+print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
 
 # plotting map to folium
 m = ox.plot_route_folium(G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
@@ -120,4 +116,3 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template('index.html')
-
