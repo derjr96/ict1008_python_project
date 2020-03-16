@@ -84,8 +84,8 @@ nodeList = list(G_walk.nodes.values())  # unrequired
 edgeList = list(G_walk.edges.items())
 
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "32 Punggol East, Singapore 828824"  # punggol will return punggol mrt coordinates
-des = "94 punggol central, Singapore 828724"  # random hdb
+src = "220A Sumang Lane, Singapore 821220"  # punggol will return punggol mrt coordinates
+des = "60 Punggol East, Singapore 828825"  # random hdb
 startpoint = ox.geocode(src)
 endpoint = ox.geocode(des)
 
@@ -94,7 +94,6 @@ endosmid = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist
 
 # testing algorithmn speed
 start_time = time.time()
-
 final = astar(startosmid[0], endosmid[0])
 print("--- %s seconds ---" % round((time.time() - start_time), 2))
 
