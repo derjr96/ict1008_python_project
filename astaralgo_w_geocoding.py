@@ -8,7 +8,6 @@ import time
 import math
 
 
-
 # retrieving lat/lon coordinates via OSMID
 def latlon(osmid):
     for k in nodeList:
@@ -80,7 +79,7 @@ distance = 2000
 G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
 # storing all nodes into a list
-nodeList = list(G_walk.nodes.values())  # unrequired
+nodeList = list(G_walk.nodes.values())
 edgeList = list(G_walk.edges.items())
 
 # user input (GUI TEAM, user input in text area will be stored here)
