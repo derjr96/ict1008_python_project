@@ -182,18 +182,115 @@ def create_graph(response_jsons, name='unnamed', retain_all=True, bidirectional=
     return G
 
 
+# calculating heuristic between two lat/lon points
+def heuristic(start, end):
+    lat1, lon1 = start[0], start[1]
+    lat2, lon2 = end[0], end[1]
+    radius = 6371  # km
+
+    distlat = math.radians(lat2 - lat1)
+    distlon = math.radians(lon2 - lon1)
+    a = math.sin(distlat / 2) * math.sin(distlat / 2) + math.cos(math.radians(lat1)) \
+        * math.cos(math.radians(lat2)) * math.sin(distlon / 2) * math.sin(distlon / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    dist = radius * c * 1000
+
+    return dist
+
+
+# finding which mrt station is closest to the start/end point
+def mrt_nearnode(srctomrt):
+    nearnode = []
+    for k in mrtNodeList:
+        if k.get("railway") == "station" or k.get("railway") == "stop":
+            h = heuristic(latlon(srctomrt), latlon(k.get("osmid")))
+            heapq.heappush(nearnode, (h, k.get("osmid")))
+    return heapq.heappop(nearnode)
+
+
+# retrieving lat/lon coordinates via OSMID
+def latlon(osmid):
+    for k in mrtNodeList:
+        if k.get("osmid") == osmid:
+            return k.get("x"), k.get("y")
+
+
+# ASTAR ALGORITHM
+def astar(start_point, end_point):
+    closepath = {}
+    path = []
+    routeq = []
+    finalret = []
+
+    # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
+    heapq.heappush(routeq, (0, 0, None, start_point))
+    closepath[start_point] = None
+
+    while True:
+        temp = heapq.heappop(routeq)
+
+        # check if we reach end point node
+        if temp[3] == end_point or heuristic(latlon(temp[3]), latlon(end_point)) < 20:
+            path.append(temp[3])
+            rear = temp[2]
+
+            # path list to append all osmid by key in closepath with the first being the end node
+            while rear is not None:
+                path.append(rear)
+                rear = closepath.get(rear)
+
+            # reverse the path list into start to end
+            path = path[::-1]
+            finalret.append(path)
+            finalret.append(temp[1])
+            return finalret
+        else:
+            for i in mrtEdgeList:
+                if i[0][0] == temp[3]:
+                    if i[0][1] in closepath:
+                        continue
+                    else:
+                        h = heuristic(latlon(i[0][1]), latlon(end_point))
+                        cur_length = i[1].get('length')
+                        heapq.heappush(routeq,
+                                       ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
+                        # adding previous path to close path dict to prevent an infinite loop of short path
+                        closepath[i[0][1]] = temp[3]
 # ------------------- main code ------------------- #
-# pp = pprint.PrettyPrinter(indent=4)
-# pp.pprint(response_json)
-
 G_lrt = create_graph(response_json)
-n, e = ox.graph_to_gdfs(G_lrt)
-e.to_csv("data/mrt_edge.csv")
-n.to_csv("data/mrt_node.csv")
-ox.plot_graph(G_lrt)
+# n, e = ox.graph_to_gdfs(G_lrt)
+# e.to_csv("data/mrt_edge.csv")
+# n.to_csv("data/mrt_node.csv")
+# ox.plot_graph(G_lrt)
 
-# nodeList = list(G_lrt.nodes.values())
-# edgeList = list(G_lrt.edges.items())
+mrtNodeList = list(G_lrt.nodes.values())
+mrtEdgeList = list(G_lrt.edges.items())
+
+startosmid = ox.get_nearest_node(G_lrt, (1.4051499, 103.9024702), method='euclidean')
+endosmid = ox.get_nearest_node(G_lrt, (1.399601, 103.9164448), method='euclidean')
+
+# testing algorithmn speed
+start_time = time.time()
+# final = astar(mrt_nearnode(startosmid), mrt_nearnode(endosmid))
+final = astar(mrt_nearnode(startosmid)[1], mrt_nearnode(endosmid)[1])
+print("--- %s seconds ---" % round((time.time() - start_time), 2))
+
+# calculating estimated time to reach the destination taking avg human walking speed of 1.4m/s
+# totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
+# estwalk = totaldist / (1.4 * 60)
+# print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
+
+# plotting map to folium
+m = ox.plot_route_folium(G_lrt, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
+m.save('templates/astar_lrt.html')
+
+
+
+
+
+
+
+
 
 # start = (103.9024702, 1.4051499)
 # end = (103.9164448, 1.399601)
@@ -203,11 +300,6 @@ ox.plot_graph(G_lrt)
 #         startosmid = nodeList[i].get("osmid")
 #     if (nodeList[i].get("x") == end[0]) and (nodeList[i].get("y") == end[1]):
 #         endosmid = nodeList[i].get("osmid")
-#
-# startosmid = ox.get_nearest_node(G_lrt, (1.4051499, 103.9024702), method='euclidean')
-# endosmid = ox.get_nearest_node(G_lrt, (1.399601, 103.9164448), method='euclidean')
-#
-# print(startosmid, endosmid)
 
 # # user input (GUI TEAM, user input in text area will be stored here)
 # startstring = "32 Punggol East, Singapore 828824" # punggol will return punggol mrt coordinates
@@ -217,4 +309,6 @@ ox.plot_graph(G_lrt)
 #
 # startosmid = ox.get_nearest_node(G_lrt, startpoint, method='euclidean')
 # endosmid = ox.get_nearest_node(G_lrt, endpoint, method='euclidean')
+
+
 
