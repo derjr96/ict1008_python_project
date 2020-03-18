@@ -198,7 +198,7 @@ def lrt_nearnode(srctomrt):
 def mrtn_latlon(osmid):
     for k in mrtNodeList:
         if k.get("osmid") == osmid:
-            return k.get("y"),k.get("x")
+            return k.get("y"), k.get("x")
 
 
 # retrieving lat/lon coordinates for walk via OSMID
@@ -320,10 +320,11 @@ def walk_astar(start_point, end_point):
 # conversion of route to coords
 def convertRoute(coords):
     output = []
-    for x in range(len(coords)): # Parent Array
-        for i in range(len(coords[x])): # Inner Array
+    for x in range(len(coords)):  # Parent Array
+        for i in range(len(coords[x])):  # Inner Array
             output.append([coords[x][i][1], coords[x][i][0]])
     return output
+
 
 # main code
 punggol = (1.403948, 103.909048)
@@ -340,6 +341,17 @@ walkNodeList = list(G_walk.nodes.values())
 walkEdgeList = list(G_walk.edges.items())
 mrtNodeList = list(G_lrt.nodes.values())
 mrtEdgeList = list(G_lrt.edges.items())
+
+pe = []
+pw = []
+for k in mrtNodeList:
+    try:
+        if "PE" in k.get('ref'):
+            pe.append(k.get('osmid'))
+        if "PW" in k.get('ref'):
+            pw.append(k.get('osmid'))
+    except:  # to prevent noneType iteration
+        continue
 
 # testing algorithmn speed
 start_time = time.time()
@@ -375,7 +387,6 @@ folium.PolyLine(([mrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4
 m.save('templates/astaralgo_walklrt.html')
 
 print("--- %s seconds ---" % round((time.time() - start_time), 2))
-
 
 '''
 FLASK IS HERE FLASK IS HERE FLASK IS HERE FLASK IS HERE

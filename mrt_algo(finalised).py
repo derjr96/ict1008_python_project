@@ -275,6 +275,17 @@ G_lrt = create_graph(response_json)
 mrtNodeList = list(G_lrt.nodes.values())
 mrtEdgeList = list(G_lrt.edges.items())
 
+pe = []
+pw = []
+for k in mrtNodeList:
+    try:
+        if "PE" in k.get('ref'):
+            pe.append(k.get('osmid'))
+        if "PW" in k.get('ref'):
+            pw.append(k.get('osmid'))
+    except:  # to prevent noneType iteration
+        continue
+
 startosmid = ox.get_nearest_node(G_lrt, (1.4014441, 103.8950046), method='euclidean', return_dist=True)
 endosmid = ox.get_nearest_node(G_lrt, (1.399601, 103.9164448), method='euclidean', return_dist=True)
 
