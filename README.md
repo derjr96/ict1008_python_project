@@ -3,6 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 - [Setting Up](#setting-up)
   - [Installing OSMnx](#installing-osmnx)
+  - [Installing OverPy](#installing-overpy)
 - [Project Details](#project-details)
 - [Milestones](#milestones)
 - [Collaborators](#collaborators)
