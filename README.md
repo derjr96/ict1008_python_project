@@ -36,6 +36,10 @@
     - pip install osmnx
 5. You should be all set!
 
+### Installing OverPy
+In your pycharm terminal tab:
+- pip install overpy
+
 ## Project Details
 Implementing and plotting network
 - [X] **Walking**
