@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import heapq
+import folium
 import time
 import math
 
@@ -184,20 +185,27 @@ def create_graph(mrt_response_json, name='unnamed', retain_all=True, bidirection
 
 
 # finding which mrt station is closest to the start/end point
-def mrt_nearnode(srctomrt, nodelist):
+def lrt_nearnode(srctomrt):
     nearnode = []
-    for k in nodelist:
+    for k in mrtNodeList:
         if k.get("railway") == "station" or k.get("railway") == "stop":
-            h = heuristic(latlon(srctomrt, nodelist), latlon(k.get("osmid"), nodelist))
+            h = heuristic(mrtn_latlon(srctomrt), mrtn_latlon(k.get("osmid")))
             heapq.heappush(nearnode, (h, k.get("osmid")))
     return heapq.heappop(nearnode)
 
 
-# retrieving lat/lon coordinates via OSMID
-def latlon(osmid, nodeList):
-    for k in nodeList:
-        if k[2] == osmid:
-            return k[1], k[0]
+# retrieving lat/lon coordinates for LRT via OSMID
+def mrtn_latlon(osmid):
+    for k in mrtNodeList:
+        if k.get("osmid") == osmid:
+            return k.get("y"),k.get("x")
+
+
+# retrieving lat/lon coordinates for walk via OSMID
+def walk_latlon(osmid):
+    for k in walkNodeList:
+        if k.get("osmid") == osmid:
+            return k.get("x"), k.get("y")
 
 
 # calculating heuristic between two lat/lon points
@@ -216,18 +224,59 @@ def heuristic(start, end):
     return dist
 
 
-# getting walk to station
-def walktoSt(edge_list, start):
+# ASTAR ALGORITHM
+def lrt_astar(start_point, end_point):
+    closepath = {}
+    path = []
+    routeq = []
+    finalret = []
     stat = []
-    for k in edge_list:
-        h = heuristic(latlon(start, edge_list), latlon(k[0][1], edge_list))
+
+    # finding start station (working)
+    for k in mrtEdgeList:
+        h = heuristic(mrtn_latlon(start_point), mrtn_latlon(k[0][1]))
         if h > 5:
             heapq.heappush(stat, (h, k[0][1]))
-    return heapq.heappop(stat)[1]
+    strt = heapq.heappop(stat)[1]
+
+    # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
+    heapq.heappush(routeq, (0, 0, None, strt))
+    closepath[strt] = None
+
+    while True:
+        temp = heapq.heappop(routeq)
+
+        # check if we reach end point node
+        if heuristic(mrtn_latlon(temp[3]), mrtn_latlon(end_point)) < 20:
+            path.append(temp[3])
+            rear = temp[2]
+
+            # path list to append all osmid by key in closepath with the first being the end node
+            while rear is not None:
+                path.append(rear)
+                rear = closepath.get(rear)
+
+            # reverse the path list into start to end
+            path = path[::-1]
+            finalret.append(path)
+            finalret.append(temp[1])
+            return finalret
+        else:
+            for i in mrtEdgeList:
+                if i[0][0] == temp[3]:
+                    if i[0][1] in closepath:
+                        continue
+                    else:
+                        he = heuristic(mrtn_latlon(i[0][1]), mrtn_latlon(end_point))
+                        cur_length = i[1].get('length')
+                        heapq.heappush(routeq,
+                                       ((he + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
+                        # adding previous path to close path dict to prevent an infinite loop of short path
+                        closepath[i[0][1]] = temp[3]
 
 
 # ASTAR ALGORITHM
-def astar(start_point, end_point, edge_list, node_list):
+def walk_astar(start_point, end_point):
     closepath = {}
     path = []
     routeq = []
@@ -255,18 +304,26 @@ def astar(start_point, end_point, edge_list, node_list):
             finalret.append(temp[1])
             return finalret
         else:
-            for i in edge_list:
+            for i in walkEdgeList:
                 if i[0][0] == temp[3]:
                     if i[0][1] in closepath:
                         continue
                     else:
-                        h = heuristic(latlon(i[0][1], node_list), latlon(end_point, node_list))
+                        h = heuristic(walk_latlon(i[0][1]), walk_latlon(end_point))
                         cur_length = i[1].get('length')
                         heapq.heappush(routeq,
                                        ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
                         # adding previous path to close path dict to prevent an infinite loop of short path
                         closepath[i[0][1]] = temp[3]
 
+
+# conversion of route to coords
+def convertRoute(coords):
+    output = []
+    for x in range(len(coords)): # Parent Array
+        for i in range(len(coords[x])): # Inner Array
+            output.append([coords[x][i][1], coords[x][i][0]])
+    return output
 
 # main code
 punggol = (1.403948, 103.909048)
@@ -284,34 +341,41 @@ walkEdgeList = list(G_walk.edges.items())
 mrtNodeList = list(G_lrt.nodes.values())
 mrtEdgeList = list(G_lrt.edges.items())
 
+# testing algorithmn speed
+start_time = time.time()
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "220A Sumang Lane, Singapore 821220"  # punggol will return punggol mrt coordinates
+src = "406B, Northshore Drive, Punggol"  # punggol will return punggol mrt coordinates 220A Sumang Lane, Singapore 821220
 des = "60 Punggol East, Singapore 828825"  # random hdb
 startpoint = ox.geocode(src)
 endpoint = ox.geocode(des)
 
-startosmid = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
-endosmid = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
-
-# Walk-LRT connection start
+# finding nearest nodes required
+strtpt = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
+endpt = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
 strtlrt = ox.get_nearest_node(G_lrt, startpoint, method='euclidean', return_dist=True)
+endlrt = ox.get_nearest_node(G_lrt, endpoint, method='euclidean', return_dist=True)
+reachLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrt_nearnode(strtlrt[0])[1]), method='euclidean', return_dist=True)
+leaveLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrt_nearnode(endlrt[0])[1]), method='euclidean', return_dist=True)
 
-#################################################### Above correct ####################################################
-mrtStart = walktoSt(mrtEdgeList, strtlrt[0])
-mrtEnd = mrt_nearnode(endosmid[0], mrtNodeList)[1]
+# algo testing walk and lrt
+walkToStation = walk_astar(strtpt[0], reachLRT[0])
+walkFromStation = walk_astar(leaveLRT[0], endpt[0])
+mrtfinal = lrt_astar(lrt_nearnode(strtlrt[0])[1], lrt_nearnode(endlrt[0])[1])
 
-# testing WALK algorithmn
-walkToStation = astar(startosmid[0], mrtStart, walkEdgeList, walkNodeList)
-walkFromStation = astar(mrtEnd[1], endosmid[0], walkEdgeList, walkNodeList)
-
-# testing LRT algorithmn
-mrtfinal = astar(walktoSt(mrtEdgeList, mrtStart[1]), mrtEnd, mrtEdgeList, mrtNodeList)
+# converting all osmnx nodes to coordinates
+walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+mrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, mrtfinal[0]))
 
 # plotting map to folium
-m = ox.plot_route_folium(G_walk, walkToStation[0], route_color='#00FFFF', route_width=5, tiles="OpenStreetMap")
-ox.plot_route_folium(G_walk, walkFromStation[0], route_color='#00FFFF', route_width=5, tiles="OpenStreetMap").add_child(m)
-ox.plot_route_folium(G_lrt, mrtfinal[0], route_color='#FF0000', route_width=5, tiles="OpenStreetMap").add_child(m)
+m = folium.Map(location=punggol, distance=distance, zoom_start=15)
+folium.PolyLine(mrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
+folium.PolyLine((walkToStation[0] + [mrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+folium.PolyLine(([mrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
 m.save('templates/astaralgo_walklrt.html')
+
+print("--- %s seconds ---" % round((time.time() - start_time), 2))
+
 
 '''
 FLASK IS HERE FLASK IS HERE FLASK IS HERE FLASK IS HERE

@@ -291,21 +291,3 @@ print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((
 # plotting map to folium
 m = ox.plot_route_folium(G_lrt, mrtfinal[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
 m.save('templates/astar_lrt.html')
-
-# start = (103.9024702, 1.4051499)
-# end = (103.9164448, 1.399601)
-#
-# for i in range(0, len(nodeList)):
-#     if (nodeList[i].get("x") == start[0]) and (nodeList[i].get("y") == start[1]):
-#         startosmid = nodeList[i].get("osmid")
-#     if (nodeList[i].get("x") == end[0]) and (nodeList[i].get("y") == end[1]):
-#         endosmid = nodeList[i].get("osmid")
-
-# # user input (GUI TEAM, user input in text area will be stored here)
-# startstring = "32 Punggol East, Singapore 828824" # punggol will return punggol mrt coordinates
-# endstring = "94 punggol central, Singapore 828724"  #random hdb
-# startpoint = ox.geocode(startstring)
-# endpoint = ox.geocode(endstring)
-#
-# startosmid = ox.get_nearest_node(G_lrt, startpoint, method='euclidean')
-# endosmid = ox.get_nearest_node(G_lrt, endpoint, method='euclidean')
