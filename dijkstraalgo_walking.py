@@ -70,7 +70,7 @@ for i in range(0, len(nodeList)):
 # testing algorithmn speed
 start_time = time.time()
 
-final = dijkstra(startosmid, endosmid)
+final = dijkstra(6543124543, 5218598739)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 # plotting map to folium
