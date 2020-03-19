@@ -1,6 +1,7 @@
 import osmnx as ox
 import networkx as nx
 import overpy
+import time
 
 def removeDupes(list):
     tempArray = []
@@ -27,6 +28,7 @@ def findPath(paths):
     # Retriving the long and lat of the nodes using busstop codes
     for i in range(len(tupleOfStartEnds)):
         resultStart = api.query("node['asset_ref'='" + str(tupleOfStartEnds[i][0]) + "'];out;")
+        time.sleep(5) #For server load overload prevention
         resultEnd = api.query("node['asset_ref'='" + str(tupleOfStartEnds[i][1]) + "'];out;")
         tupleOfStartEndQueriesNodes.append((resultStart.nodes[0], resultEnd.nodes[0]))
 
@@ -39,4 +41,4 @@ def findPath(paths):
 
     route = removeDupes(route)
 
-    return route
+    return route, tupleOfStartEndQueriesNodes
