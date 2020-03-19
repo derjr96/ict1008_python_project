@@ -225,19 +225,23 @@ def heuristic(start, end):
 
 
 # ASTAR ALGORITHM
-def lrt_astar(start_point, end_point):
+def lrt_astar(start_point, end_point, use):
     closepath = {}
     path = []
     routeq = []
     finalret = []
     stat = []
+    strt = 0
 
     # finding start station (working)
-    for k in mrtEdgeList:
-        h = heuristic(mrtn_latlon(start_point), mrtn_latlon(k[0][1]))
-        if h > 5:
-            heapq.heappush(stat, (h, k[0][1]))
-    strt = heapq.heappop(stat)[1]
+    if use == "no":
+        for k in mrtEdgeList:
+            h = heuristic(mrtn_latlon(start_point), mrtn_latlon(k[0][1]))
+            if h > 30:
+                heapq.heappush(stat, (h, k[0][1]))
+        strt = heapq.heappop(stat)[1]
+    elif use == "yes":
+        strt = start_point
 
     # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
     heapq.heappush(routeq, (0, 0, None, strt))
@@ -247,7 +251,7 @@ def lrt_astar(start_point, end_point):
         temp = heapq.heappop(routeq)
 
         # check if we reach end point node
-        if heuristic(mrtn_latlon(temp[3]), mrtn_latlon(end_point)) < 20:
+        if heuristic(mrtn_latlon(temp[3]), mrtn_latlon(end_point)) < 60:
             path.append(temp[3])
             rear = temp[2]
 
@@ -311,8 +315,7 @@ def walk_astar(start_point, end_point):
                     else:
                         h = heuristic(walk_latlon(i[0][1]), walk_latlon(end_point))
                         cur_length = i[1].get('length')
-                        heapq.heappush(routeq,
-                                       ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
+                        heapq.heappush(routeq, (h + cur_length + temp[1], cur_length + temp[1], temp[3], i[0][1]))
                         # adding previous path to close path dict to prevent an infinite loop of short path
                         closepath[i[0][1]] = temp[3]
 
@@ -344,49 +347,110 @@ mrtEdgeList = list(G_lrt.edges.items())
 
 pe = []
 pw = []
-for k in mrtNodeList:
+for k in mrtNodeList:  # check for nodes which are stations
     try:
         if "PE" in k.get('ref'):
             pe.append(k.get('osmid'))
         if "PW" in k.get('ref'):
             pw.append(k.get('osmid'))
-    except:  # to prevent noneType iteration
+    except:  # to catch and skip noneType iterations
         continue
 
 # testing algorithmn speed
 start_time = time.time()
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "406B, Northshore Drive, Punggol"  # punggol will return punggol mrt coordinates 220A Sumang Lane, Singapore 821220
-des = "60 Punggol East, Singapore 828825"  # random hdb
+src = "406B, Northshore Drive, Punggol"
+# punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
+des = "Blk 126D, Punggol Field, Punggol"  # random hdb 60 Punggol East, Singapore 828825
 startpoint = ox.geocode(src)
 endpoint = ox.geocode(des)
 
 # finding nearest nodes required
 strtpt = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
 endpt = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
-strtlrt = ox.get_nearest_node(G_lrt, startpoint, method='euclidean', return_dist=True)
-endlrt = ox.get_nearest_node(G_lrt, endpoint, method='euclidean', return_dist=True)
-reachLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrt_nearnode(strtlrt[0])[1]), method='euclidean', return_dist=True)
-leaveLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrt_nearnode(endlrt[0])[1]), method='euclidean', return_dist=True)
 
-# algo testing walk and lrt
-walkToStation = walk_astar(strtpt[0], reachLRT[0])
-walkFromStation = walk_astar(leaveLRT[0], endpt[0])
-mrtfinal = lrt_astar(lrt_nearnode(strtlrt[0])[1], lrt_nearnode(endlrt[0])[1])
+# locateStrtLrt and lcoateEndLrt is only used to locate the location of both mrt
+locateStrtLrt = ox.get_nearest_node(G_lrt, startpoint, method='euclidean', return_dist=True)
+lcoateEndLrt = ox.get_nearest_node(G_lrt, endpoint, method='euclidean', return_dist=True)
+lrtstart = lrt_nearnode(locateStrtLrt[0])[1]
+lrtend = lrt_nearnode(lcoateEndLrt[0])[1]
 
-# converting all osmnx nodes to coordinates
-walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-mrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, mrtfinal[0]))
+if lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or \
+        (lrtstart == 6587709457 and lrtend == 6587709456):
+    final = walk_astar(strtpt[0], endpt[0])
 
-# plotting map to folium
-m = folium.Map(location=punggol, distance=distance, zoom_start=15)
-folium.PolyLine(mrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-folium.PolyLine((walkToStation[0] + [mrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-folium.PolyLine(([mrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
-m.save('templates/astaralgo_walklrt.html')
+    # plotting map to folium
+    m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap")
+    m.save('templates/astaralgo_walklrt.html')
+else:
+    reachLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
+    leaveLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrtend), method='euclidean', return_dist=True)
 
-print("--- %s seconds ---" % round((time.time() - start_time), 2))
+    eastlrt = 0
+    westlrt = 0
+    for i in mrtNodeList:
+        if i.get('osmid') == lrtstart and lrtstart in pe:
+            eastlrt += 1
+            # print("scenario1")
+        elif i.get('osmid') == lrtstart and lrtstart in pw:
+            # print("scenario2")
+            westlrt += 1
+        elif i.get('osmid') == lrtend and lrtend in pe:
+            # print("scenario3")
+            eastlrt += 1
+        elif i.get('osmid') == lrtend and lrtend in pw:
+            # print("scenario4")
+            westlrt += 1
+        elif westlrt == 2 or eastlrt == 2:  # both lrt station in the same lrt loop
+            break
+        elif westlrt == 1 and eastlrt == 1:  # both lrt station in different lrt loop
+            # print("break")
+            break
+
+    m = folium.Map(location=punggol, distance=distance, zoom_start=15)
+
+    if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
+        # algo testing walk and lrt
+        walkToStation = walk_astar(strtpt[0], reachLRT[0])
+        walkFromStation = walk_astar(leaveLRT[0], endpt[0])
+        if lrtstart in pw:
+            lrtfirst = lrt_astar(lrt_nearnode(lrtstart)[1], 6587709456, "no")
+            lrtsecond = lrt_astar(6587709457, lrt_nearnode(lrtend)[1], "yes")
+        elif lrtstart in pe:
+            lrtfirst = lrt_astar(lrt_nearnode(lrtstart)[1], 6587709457, "no")
+            lrtsecond = lrt_astar(6587709456, lrt_nearnode(lrtend)[1], "yes")
+
+        # converting all osmnx nodes to coordinates
+        walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+        walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+        lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
+        lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+
+        folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+        m.save('templates/astaralgo_walklrt.html')
+
+    else:  # if both stations are found on the same lrt loop
+        # algo testing walk and lrt
+        walkToStation = walk_astar(strtpt[0], reachLRT[0])
+        walkFromStation = walk_astar(leaveLRT[0], endpt[0])
+        mrtfinal = lrt_astar(lrt_nearnode(lrtstart)[1], lrt_nearnode(lrtend)[1], "no")
+
+        # converting all osmnx nodes to coordinates
+        walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+        walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+        mrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, mrtfinal[0]))
+
+        # plotting map to folium
+        folium.PolyLine(mrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
+        folium.PolyLine((walkToStation[0] + [mrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(([mrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+        m.save('templates/astaralgo_walklrt.html')
+
+print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
 
 '''
 FLASK IS HERE FLASK IS HERE FLASK IS HERE FLASK IS HERE

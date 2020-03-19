@@ -19,7 +19,7 @@ def latlon(osmid):
 def heuristic(start, end):
     lat1, lon1 = start[0], start[1]
     lat2, lon2 = end[0], end[1]
-    radius = 6371  # km
+    radius = 6371.01  # km
 
     distlat = math.radians(lat2 - lat1)
     distlon = math.radians(lon2 - lon1)
@@ -30,6 +30,7 @@ def heuristic(start, end):
     return dist
 
 
+
 # ASTAR ALGORITHM
 def walk_astar(start_point, end_point):
     closepath = {}
@@ -37,12 +38,14 @@ def walk_astar(start_point, end_point):
     routeq = []
     finalret = []
 
+    main_h = heuristic(latlon(start_point), latlon(end_point))
     # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
     heapq.heappush(routeq, (0, 0, None, start_point))
     closepath[start_point] = None
 
     while True:
         temp = heapq.heappop(routeq)
+
         # check if we reach end point node
         if temp[3] == end_point:
             path.append(temp[3])
@@ -65,11 +68,12 @@ def walk_astar(start_point, end_point):
                         continue
                     else:
                         h = heuristic(latlon(i[0][1]), latlon(end_point))
-                        cur_length = i[1].get('length')
-                        heapq.heappush(routeq,
-                                       ((h + cur_length), cur_length + temp[1], temp[3], i[0][1]))
-                        # adding previous path to close path dict to prevent an infinite loop of short path
-                        closepath[i[0][1]] = temp[3]
+                        if h < main_h:
+                            cur_length = i[1].get('length') + temp[1]
+                            heur = h + cur_length
+                            heapq.heappush(routeq, (heur, cur_length, temp[3], i[0][1]))
+                            # adding previous path to close path dict to prevent an infinite loop of short path
+                            closepath[i[0][1]] = temp[3]
 
 
 # main code
@@ -101,6 +105,7 @@ estwalk = totaldist / (1.4 * 60)
 print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
 
 # plotting map to folium
+print(final[0])
 m = ox.plot_route_folium(G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
 m.save('templates/astar_walking.html')
 
