@@ -42,16 +42,10 @@ def walk_astar(start_point, end_point):
     # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
     heapq.heappush(routeq, (0, 0, None, start_point))
     closepath[start_point] = None
-    count = 0
+
     while True:
-
         temp = heapq.heappop(routeq)
-        print("temp")
-        print(temp)
-        print("this is temp")
 
-        if count == 1:
-            exit()
         # check if we reach end point node
         if temp[3] == end_point:
             path.append(temp[3])
@@ -69,8 +63,7 @@ def walk_astar(start_point, end_point):
             return finalret
         else:
             for i in walkEdgeList:
-                if i[0][0] == temp[3] or i[0][0] == 4699873963:
-                    count = 1
+                if i[0][0] == temp[3]:
                     if i[0][1] in closepath:
                         continue
                     else:
@@ -81,9 +74,6 @@ def walk_astar(start_point, end_point):
                             heapq.heappush(routeq, (heur, cur_length, temp[3], i[0][1]))
                             # adding previous path to close path dict to prevent an infinite loop of short path
                             closepath[i[0][1]] = temp[3]
-                            print(closepath)
-                            print("this is h 741")
-                            print(heur, cur_length, temp[3], i[0][1])
 
 
 # main code

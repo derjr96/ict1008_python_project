@@ -315,8 +315,7 @@ def walk_astar(start_point, end_point):
                     else:
                         h = heuristic(walk_latlon(i[0][1]), walk_latlon(end_point))
                         cur_length = i[1].get('length')
-                        heapq.heappush(routeq,
-                                       ((h + temp[1] + cur_length), cur_length + temp[1], temp[3], i[0][1]))
+                        heapq.heappush(routeq, (h + cur_length + temp[1], cur_length + temp[1], temp[3], i[0][1]))
                         # adding previous path to close path dict to prevent an infinite loop of short path
                         closepath[i[0][1]] = temp[3]
 
@@ -348,7 +347,7 @@ mrtEdgeList = list(G_lrt.edges.items())
 
 pe = []
 pw = []
-for k in mrtNodeList:   # check for nodes which are stations
+for k in mrtNodeList:  # check for nodes which are stations
     try:
         if "PE" in k.get('ref'):
             pe.append(k.get('osmid'))
@@ -410,7 +409,7 @@ else:
 
     m = folium.Map(location=punggol, distance=distance, zoom_start=15)
 
-    if westlrt == 1 and eastlrt == 1:   # if both stations are found on both loop (west loop and east loop)
+    if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
         # algo testing walk and lrt
         walkToStation = walk_astar(strtpt[0], reachLRT[0])
         walkFromStation = walk_astar(leaveLRT[0], endpt[0])
@@ -434,7 +433,7 @@ else:
         folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
         m.save('templates/astaralgo_walklrt.html')
 
-    else:   # if both stations are found on the same lrt loop
+    else:  # if both stations are found on the same lrt loop
         # algo testing walk and lrt
         walkToStation = walk_astar(strtpt[0], reachLRT[0])
         walkFromStation = walk_astar(leaveLRT[0], endpt[0])
