@@ -34,9 +34,8 @@ def plotShortestWalkBus(startLocation, endLocation):
     # Find path of INITIAL WALK to BUS STOP
     initialWalkToBusStop = plotShortestWalkRoute.plotWalk(startLocation, startBusStopLatLon)
 
-
     # Find destination busstop, retrieve its busStopCode, latlon
-    time.sleep(60) #Try to prevent too many request
+    time.sleep(60)  # Try to prevent too many request
     print("Sleeping 60 seconds")
 
     endBusStopNode = api.query(
@@ -44,22 +43,18 @@ def plotShortestWalkBus(startLocation, endLocation):
     endBusStopLatLon = (endBusStopNode.lat, endBusStopNode.lon)
     endBusStopCode = endBusStopNode.tags['asset_ref']
 
-
     # Find path of FINAL WALK from BUS STOP to DESTINATION
     finalWalkFromBusStopToDestination = plotShortestWalkRoute.plotWalk(endBusStopLatLon, endLocation)
-
 
     # Find path of BUS ROUTE
     paths = findShortestBusRoute.findShortestBusRoute(int(startBusStopCode), int(endBusStopCode))
     busRouteToPlot = plotShortestBusRoute.findPath(paths)
-
 
     # Convert Path(List of Nodes) to Path(List of coords) to draw PolyLines
     initialWalkToBusStop = convertRoute(ox.plot.node_list_to_coordinate_lines(W, initialWalkToBusStop))
     busRouteToPlot = convertRoute(ox.plot.node_list_to_coordinate_lines(D, busRouteToPlot))
     finalWalkFromBusStopToDestination = convertRoute(
         ox.plot.node_list_to_coordinate_lines(W, finalWalkFromBusStopToDestination))
-
 
     # Plot Final Graph
     m = folium.Map(location=punggol, distance=distance, zoom_start=15)
@@ -133,12 +128,13 @@ def plotShortestWalkBus(startLocation, endLocation):
 
 # startLocation = tuple(input("Enter starting coords:").split(','))  # PunggolGreenPrimarySch 1.4021,103.89872
 # endLocation = tuple(input("Enter ending coords:").split(','))  # PunggolBusInterchange 1.40394,103.90263
-
+start_time = time.time()
 startLocation = ('1.40394', '103.90263')
 endLocation = ('1.42066', '103.91126')
 
 # try:
 plotShortestWalkBus(startLocation, endLocation)
+print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
 # except overpy.exception:
 #     print("Please try again. Server load too high or too many request!\n")
 # else:
