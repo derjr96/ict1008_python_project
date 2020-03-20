@@ -380,7 +380,8 @@ if lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or \
     final = walk_astar(strtpt[0], endpt[0])
 
     # plotting map to folium
-    m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap")
+    m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
+                             popup_attribute="There is no LRT to bring you to your destination, please walk.")
     m.save('templates/astaralgo_walklrt.html')
 else:
     reachLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
@@ -426,9 +427,9 @@ else:
         lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
         lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
 
-        folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
+        folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
+        folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
         folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
         folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
         m.save('templates/astaralgo_walklrt.html')
