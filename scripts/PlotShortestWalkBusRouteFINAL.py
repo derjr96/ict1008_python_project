@@ -4,6 +4,7 @@ import pandas as pd
 import folium
 import osmnx as ox
 import overpy
+import time
 import scripts.findShortestBusRouteFINAL as findShortestBusRoute
 import scripts.PlotShortestBusRouteHelperBusFINAL as plotShortestBusRoute
 import scripts.PlotShortestWalkBusRouteHelperWalkFINAL as plotShortestWalkRoute
@@ -18,6 +19,8 @@ def convertRoute(coords):
 
 
 def plotShortestWalkBus(startLocation, endLocation):
+    startTime = time.time()
+
     api = overpy.Overpass()
     punggol = (1.4041070, 103.9025242)
     distance = 3000
@@ -26,7 +29,7 @@ def plotShortestWalkBus(startLocation, endLocation):
 
     # Find busstop to walk to, retrieve its busstopCode, latlon
     startBusStopNode = api.query(
-        "node(around:150," + startLocation[0] + "," + startLocation[1] + ")[highway=bus_stop];out;").nodes[0]
+        "node(around:100," + startLocation[0] + "," + startLocation[1] + ")[highway=bus_stop];out;").nodes[0]
     startBusStopLatLon = (startBusStopNode.lat, startBusStopNode.lon)
     startBusStopCode = startBusStopNode.tags['asset_ref']
 
@@ -35,7 +38,7 @@ def plotShortestWalkBus(startLocation, endLocation):
 
     # Find destination busstop, retrieve its busStopCode, latlon
     endBusStopNode = api.query(
-        "node(around:150," + endLocation[0] + "," + endLocation[1] + ")[highway=bus_stop];out;").nodes[0]
+        "node(around:100," + endLocation[0] + "," + endLocation[1] + ")[highway=bus_stop];out;").nodes[0]
     endBusStopLatLon = (endBusStopNode.lat, endBusStopNode.lon)
     endBusStopCode = endBusStopNode.tags['asset_ref']
 
@@ -119,6 +122,9 @@ def plotShortestWalkBus(startLocation, endLocation):
 
     # Save as html file
     m.save('../templates/dijkstra_walk_bus.html')
+
+    endTime = time.time()
+    print("Time taken: ", endTime-startTime)
 
 
 # startLocation = tuple(input("Enter starting coords:").split(','))  # PunggolGreenPrimarySch 1.4021,103.89872
