@@ -58,9 +58,9 @@ Implementing and plotting network
 - [ ] Code Cleanup (Remove unnecessary shit)
 
 ## Collaborators
-1. **Darrell Er** | [@derjr96](https://github.com/derjr96) | A* Algorithm & Walking
-2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) | Bus
-3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan) | MRT
+1. **Darrell Er** | [@derjr96](https://github.com/derjr96) | Dijkstra and A* Algorithm, MRT + Walk & Walk
+2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) | Bus + Walk
+3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan) | GUI
 4. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious) | GUI
-5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard) | GUI
+5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard) | GUI, Video & Poster
 6. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr) | GUI
