@@ -3,6 +3,7 @@ import heapq
 import folium
 import time
 import math
+from datetime import datetime
 
 import pprint
 import numpy as np
@@ -182,6 +183,25 @@ def create_graph(mrt_response_json, name='unnamed', retain_all=True, bidirection
         G = ox.add_edge_lengths(G)
 
     return G
+
+# LRT fare based on distance travelled
+def lrtFareCal(distance):
+    if distance <= 3.2:
+        print("Student Fare: $0.42")
+        print("Adult Fare: $0.92")
+        print("Senior Citizen Fare: $0.59")
+    elif 4.2 >= distance > 3.2:
+        print("Student Fare: $0.47")
+        print("Adult Fare: $1.02")
+        print("Senior Citizen Fare: $0.66")
+    elif 5.2 >= distance > 4.2:
+        print("Student Fare: $0.52")
+        print("Adult Fare: $1.12")
+        print("Senior Citizen Fare: $0.73")
+    elif 6.2 >= distance > 5.2:
+        print("Student Fare: $0.47")
+        print("Adult Fare: $1.22")
+        print("Senior Citizen Fare: $0.80")
 
 
 # finding which mrt station is closest to the start/end point
@@ -390,16 +410,17 @@ else:
     eastlrt = 0
     westlrt = 0
     for i in mrtNodeList:
-        if i.get('osmid') == lrtstart and lrtstart in pe:
+        mrtid = i.get('osmid')
+        if mrtid == lrtstart and lrtstart in pe:
             eastlrt += 1
             # print("scenario1")
-        elif i.get('osmid') == lrtstart and lrtstart in pw:
+        elif mrtid == lrtstart and lrtstart in pw:
             # print("scenario2")
             westlrt += 1
-        elif i.get('osmid') == lrtend and lrtend in pe:
+        elif mrtid == lrtend and lrtend in pe:
             # print("scenario3")
             eastlrt += 1
-        elif i.get('osmid') == lrtend and lrtend in pw:
+        elif mrtid == lrtend and lrtend in pw:
             # print("scenario4")
             westlrt += 1
         elif westlrt == 2 or eastlrt == 2:  # both lrt station in the same lrt loop
@@ -427,6 +448,27 @@ else:
         lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
         lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
 
+        # calculating estimated time, cost, distance to reach the destination
+        statDist = 10300 / 14
+        totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000    # convert to meters to km
+        now = datetime.now()
+        timenow = now.strftime("%H")
+        waitTime = 0
+        if "10" > timenow > "6":
+            print("--- PEAK HOUR ---")
+            waitTime = 3
+        else:
+            print("--- NON-PEAK HOUR ---")
+            waitTime = 7
+        lrtFareCal(totalDistLRT)    # call fare function
+        numStation = math.floor(totalDistLRT / statDist + 2)
+        totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
+        totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
+        estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
+        print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+              str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+
+        # plotting on folium map
         folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
         folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
         folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
