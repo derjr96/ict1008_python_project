@@ -11,7 +11,7 @@
 
 ## Setting Up
 ### Installing Environment
-    **Recommended, this does not work, you would have to do it manually.**
+    Recommended to create environment from environment.yml, if this does not work, you would have to do it manually.
 #### Creating an environment from an environment.yml file
 1. [Install](https://www.anaconda.com/distribution/) Anaconda for Python 3.7. (Ensure you have Anaconda first)
 
