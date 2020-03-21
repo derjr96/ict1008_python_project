@@ -3,7 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 - [Setting Up](#setting-up)
   - [Installing OSMnx](#installing-osmnx)
-  - [Installing OverPy](#installing-overpy)
+  - [Installing Required Dependencies](#installing-required-dependencies)
 - [Project Details](#project-details)
 - [Milestones](#milestones)
 - [Collaborators](#collaborators)
@@ -36,15 +36,18 @@
     - pip install osmnx
 5. You should be all set!
 
-### Installing OverPy
+### Installing Required Dependencies
 In your pycharm terminal tab:
 - pip install overpy
+- pip install Flask
+- pip install heapq
+- pip install folium
 
 ## Project Details
 Implementing and plotting network
 - [X] **Walking**
-- [ ] **Bus**
-- [ ] **MRT**
+- [X] **Bus**
+- [X] **MRT**
 
 ## Milestones
 - [X] Planning
