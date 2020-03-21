@@ -92,61 +92,63 @@ def get_node(element):
                 node[useful_tag] = element['tags'][useful_tag]
     return node
 
-#
-# def get_path(element, element_r):
-#     """
-#     Convert an OSM way element into the format for a networkx graph path.
-#
-#     Parameters
-#     ----------
-#     element : dict
-#         an OSM way element
-#
-#     Returns
-#     -------
-#     dict
-#     """
-#     useful_tags_path_e = ['bridge', 'tunnel', 'oneway', 'lanes', 'name',
-#                           'highway', 'maxspeed', 'service', 'access', 'area',
-#                           'landuse', 'width', 'est_width', 'junction']
-#
-#     useful_tags_path_r = ['bridge', 'tunnel', 'oneway', 'lanes', 'ref', 'direction', 'from', 'to', 'name',
-#                           'highway', 'maxspeed', 'service', 'access', 'area',
-#                           'landuse', 'width', 'est_width', 'junction']
-#
-#     path = {}
-#     path['osmid'] = element['id']
-#
-#     # remove any consecutive duplicate elements in the list of nodes
-#     grouped_list = groupby(element['nodes'])
-#     path['nodes'] = [group[0] for group in grouped_list]
-#
-#     if 'tags' in element:
-#         for relation in element_r['elements']:
-#             if relation['type'] == 'relation':
-#                 for members in relation['members']:
-#                     if members['ref'] == element['id']:
-#                         for useful_tag in useful_tags_path_e:
-#                             if useful_tag in element['tags']:
-#                                 path[useful_tag] = element['tags'][useful_tag]
-#                         for useful_tag in useful_tags_path_r:
-#                             if useful_tag in relation['tags']:
-#                                 try:
-#                                     path[useful_tag] = path[useful_tag] + ";" + relation['tags'][useful_tag]
-#                                 except KeyError:
-#                                     path[useful_tag] = relation['tags'][useful_tag]
-#                                     pass
-#     return path
+
+def get_path(element, element_r):
+    """
+    Convert an OSM way element into the format for a networkx graph path.
+
+    Parameters
+    ----------
+    element : dict
+        an OSM way element
+
+    Returns
+    -------
+    dict
+    """
+    useful_tags_path_e = ['bridge', 'tunnel', 'oneway', 'lanes', 'name',
+                          'highway', 'maxspeed', 'service', 'access', 'area',
+                          'landuse', 'width', 'est_width', 'junction']
+
+    useful_tags_path_r = ['bridge', 'tunnel', 'oneway', 'lanes', 'ref', 'direction', 'from', 'to', 'name',
+                          'highway', 'maxspeed', 'service', 'access', 'area',
+                          'landuse', 'width', 'est_width', 'junction']
+
+    path = {}
+    path['osmid'] = element['id']
+
+    # remove any consecutive duplicate elements in the list of nodes
+    grouped_list = groupby(element['nodes'])
+    path['nodes'] = [group[0] for group in grouped_list]
+
+    if 'tags' in element:
+        for relation in element_r['elements']:
+            if relation['type'] == 'relation':
+                for members in relation['members']:
+                    if members['ref'] == element['id']:
+                        for useful_tag in useful_tags_path_e:
+                            if useful_tag in element['tags']:
+                                path[useful_tag] = element['tags'][useful_tag]
+                        for useful_tag in useful_tags_path_r:
+                            if useful_tag in relation['tags']:
+                                try:
+                                    path[useful_tag] = path[useful_tag] + ";" + relation['tags'][useful_tag]
+                                except KeyError:
+                                    path[useful_tag] = relation['tags'][useful_tag]
+                                    pass
+    return path
 
 
 def parse_osm_nodes_paths(osm_data):
     """
     Construct dicts of nodes and paths with key=osmid and value=dict of
     attributes.
+
     Parameters
     ----------
     osm_data : dict
         JSON response from from the Overpass API
+
     Returns
     -------
     nodes, paths : tuple
@@ -154,13 +156,20 @@ def parse_osm_nodes_paths(osm_data):
 
     nodes = {}
     paths = {}
+    relation = {}
+
+    # for element in osm_data['elements']:
+    #     if element['type'] == 'relation':
+
     for element in osm_data['elements']:
         if element['type'] == 'node':
             key = element['id']
             nodes[key] = get_node(element)
+
         elif element['type'] == 'way':  # osm calls network paths 'ways'
             key = element['id']
-            paths[key] = ox.get_path(element, )
+            # pp.pprint(element)
+            paths[key] = get_path(element, osm_data)
 
     return nodes, paths
 
