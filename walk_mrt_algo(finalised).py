@@ -1,69 +1,16 @@
 from flask import Flask, render_template
 import heapq
 import folium
-import time
 import math
+import networkx as nx
+import time
 from datetime import datetime
-
-import pprint
-import numpy as np
 import osmnx as ox
-import networkx as nx
-import math
-import matplotlib.pyplot as plt
-import pandas as pd
-import itertools as it
-import geopandas as gpd
-
-import io
-import json
-import hashlib
-import math
-import requests
-import time
-import re
-import datetime as dt
-import os
-import logging as lg
-from collections import OrderedDict
-from dateutil import parser as date_parser
-from osmnx.errors import *
-from osmnx.utils import make_str, log
-
 from osmnx import settings
-from osmnx.downloader import get_from_cache, get_http_headers, get_pause_duration, save_to_cache
-
-import geopandas as gpd
-import logging as lg
-import math
-import networkx as nx
-import numpy as np
-import pandas as pd
-import time
-
-from itertools import groupby
-from shapely.geometry import LineString
-from shapely.geometry import MultiPolygon
-from shapely.geometry import Point
-from shapely.geometry import Polygon
-from shapely.ops import unary_union
-
-from osmnx import settings
-from osmnx.projection import project_geometry
-from osmnx.projection import project_gdf
-from osmnx.simplify import simplify_graph
 from osmnx.utils import make_str, log
 from osmnx.geo_utils import get_largest_component
-from osmnx.utils import great_circle_vec
-from osmnx.geo_utils import get_nearest_node
-from osmnx.geo_utils import geocode
-from osmnx.geo_utils import count_streets_per_node
-from osmnx.geo_utils import overpass_json_from_file
-from osmnx.downloader import osm_polygon_download
-from osmnx.downloader import get_osm_filter
 from osmnx.downloader import overpass_request
 from osmnx.errors import *
-from osmnx.core import consolidate_subdivide_geometry, get_polygons_coordinates
 
 
 def get_node(element):
