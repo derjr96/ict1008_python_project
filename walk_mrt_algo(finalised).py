@@ -379,7 +379,7 @@ for k in mrtNodeList:  # check for nodes which are stations
 # testing algorithmn speed
 start_time = time.time()
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "406B, Northshore Drive, Punggol"
+src = "Punggol"     # 406B, Northshore Drive, Punggol
 # punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
 des = "Blk 126D, Punggol Field, Punggol"  # random hdb 60 Punggol East, Singapore 828825
 startpoint = ox.geocode(src)
@@ -480,17 +480,38 @@ else:
         # algo testing walk and lrt
         walkToStation = walk_astar(strtpt[0], reachLRT[0])
         walkFromStation = walk_astar(leaveLRT[0], endpt[0])
-        mrtfinal = lrt_astar(lrt_nearnode(lrtstart)[1], lrt_nearnode(lrtend)[1], "no")
+        lrtfinal = lrt_astar(lrt_nearnode(lrtstart)[1], lrt_nearnode(lrtend)[1], "no")
 
         # converting all osmnx nodes to coordinates
         walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
         walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-        mrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, mrtfinal[0]))
+        lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
+
+        # calculating estimated time, cost, distance to reach the destination
+        statDist = 10300 / 14
+        totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
+        now = datetime.now()
+        timenow = now.strftime("%H")
+        waitTime = 0
+        if "10" > timenow > "6":
+            print("--- PEAK HOUR ---")
+            waitTime = 3
+        else:
+            print("--- NON-PEAK HOUR ---")
+            waitTime = 7
+        lrtFareCal(totalDistLRT)  # call fare function
+        numStation = math.floor(totalDistLRT / statDist + 2)
+        totatTimeLRT = numStation + (
+                    (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+        totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
+        estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+        print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+              str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
 
         # plotting map to folium
-        folium.PolyLine(mrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-        folium.PolyLine((walkToStation[0] + [mrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(([mrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
+        folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
         m.save('templates/astaralgo_walklrt.html')
 
 print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
