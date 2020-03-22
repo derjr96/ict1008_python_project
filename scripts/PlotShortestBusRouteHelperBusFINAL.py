@@ -1,7 +1,12 @@
+import json
+import math
+import numpy as np
 import osmnx as ox
 import networkx as nx
 import overpy
 import time
+import pandas as pd
+
 
 def removeDupes(list):
     tempArray = []
@@ -14,34 +19,43 @@ def removeDupes(list):
 def findPath(paths):
     startTime = time.time()
 
-    api = overpy.Overpass()
     punggol = (1.4041070, 103.9025242)  # Punggol Interchange as mid point
     distance = 3000
     G = ox.graph_from_point(punggol, distance=distance, network_type='drive_service')
 
-    listOfNodes = []
-    tupleOfStartEndQueriesNodes = []  # Node IDs of BusStops in [(Start1, End2), (Start2, End3)] format
-    route = []  # Routes to travel from [[Route Start1 to End 2], [Route Start2 to End3]] format
+    listOfNodes = []  # Stored as [ (lat, lon, BusStopCode) ] format
+    listOfTuplesStartEndLatLon = []  # Stored as [ ((Start1 lat, Start1 lon) , (End2 lat, End2 lon)) ] format
+    route = []  # Routes to travel from [Route Start1 to End 2]format
 
-    for i in range(len(paths)):
-            listOfNodes.append(api.query("node['asset_ref'='" + str(paths[i]) + "'];out;").nodes[0])
+    with open('../bus_data/Punggol_Bus_Stops.json') as bus_stop:
+        data = json.load(bus_stop)
 
-    # Retriving the long and lat of the nodes using busstop codes
+        for i in paths:
+            for x in data['punggolBusStops']:
+                if i == int(x['BusStopCode']):
+                    tempTuple = (x['Latitude'], x['Longitude'], x['BusStopCode'])
+                    listOfNodes.append(tempTuple)
+                    break
+
+    # Retriving the long and lat of the nodes
     for i in range(len(listOfNodes)):
         if i != (len(listOfNodes) - 1):
-            tupleOfStartEndQueriesNodes.append((listOfNodes[i], listOfNodes[i+1]))
+            listOfTuplesStartEndLatLon.append(((float(listOfNodes[i][0]), float(listOfNodes[i][1])),
+                                               (float(listOfNodes[i + 1][0]), float(listOfNodes[i + 1][1]))))
 
     # Retriving of all routes(edges) to plot route
-    for i in range(len(tupleOfStartEndQueriesNodes)):
+    for i in range(len(listOfTuplesStartEndLatLon)):
         route.extend(nx.shortest_path(G, (
-            ox.get_nearest_edge(G, (tupleOfStartEndQueriesNodes[i][0].lat, tupleOfStartEndQueriesNodes[i][0].lon))[2]),
-                                      (ox.get_nearest_edge(G, (tupleOfStartEndQueriesNodes[i][1].lat,
-                                                               tupleOfStartEndQueriesNodes[i][1].lon)))[2]))
+            ox.get_nearest_edge(G, (listOfTuplesStartEndLatLon[i][0][0], listOfTuplesStartEndLatLon[i][0][1])))[2], (
+                                          ox.get_nearest_edge(G, (
+                                              listOfTuplesStartEndLatLon[i][1][0],
+                                              listOfTuplesStartEndLatLon[i][1][1])))[
+                                          2]))
 
     route = removeDupes(route)
 
     endTime = time.time()
 
-    print("Bus Route Plotting Takes: ", (endTime - startTime))
+    print("Bus Route Retrieval Takes: ", round((endTime - startTime), 2))
 
-    return route, tupleOfStartEndQueriesNodes
+    return route, listOfTuplesStartEndLatLon

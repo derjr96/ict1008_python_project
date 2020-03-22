@@ -1,8 +1,11 @@
 import osmnx as ox
 import heapq
+import time
 
 
 def plotWalk(start, end):
+    startTime = time.time()
+
     punggol = (1.4041070, 103.9025242)
     distance = 3000
     G = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
@@ -32,6 +35,7 @@ def plotWalk(start, end):
 
     final = dijkstra(startosmid, endosmid, edgeList)
 
+    print("Walk Route Retrieval Takes: ", round(time.time() - startTime, 2))
     return final
 
 
