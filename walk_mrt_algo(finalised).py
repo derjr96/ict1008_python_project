@@ -326,9 +326,9 @@ for k in mrtNodeList:  # check for nodes which are stations
 # testing algorithmn speed
 start_time = time.time()
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "Punggol"     # 406B, Northshore Drive, Punggol
+src = "Nibong, Punggol"     # 406B, Northshore Drive, Punggol
 # punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
-des = "Blk 126D, Punggol Field, Punggol"  # random hdb 60 Punggol East, Singapore 828825
+des = "406B, Northshore Drive, Punggol"  # random hdb 60 Punggol East, Singapore 828825
 startpoint = ox.geocode(src)
 endpoint = ox.geocode(des)
 
