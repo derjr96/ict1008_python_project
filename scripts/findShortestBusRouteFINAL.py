@@ -1,13 +1,15 @@
 import collections
 import math
 from collections import deque, namedtuple
-
+import time
 import numpy as np
 import pandas as pd
 
 
 def findShortestBusRoute(startBusStopCode, endBusStopCode):
     # we'll use infinity as a default distance to nodes.
+
+    startTime = time.time()
 
     inf = float('inf')
     Edge = namedtuple('Edge', 'start, end, cost')
@@ -97,13 +99,15 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
         tupleProcessed = []
         df = pd.read_csv("../bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
         for x in df.values:
-            tempArray = [x[0].astype(np.int), x[1].astype(np.int), x[2]]
             if math.isnan(x[0]):
                 pass
             else:
+                tempArray = [x[0].astype(np.int), x[1].astype(np.int), x[2]]
                 tupleProcessed.append(tuple(tempArray))
 
         graph = Graph(tupleProcessed)
+
+        print("Time for Dijkstra Bus Takes: ", round(time.time() - startTime, 2))
 
         if len(graph.dijkstra(startBusStopCode, endBusStopCode)) == 0:
             print("Path not found!")
@@ -112,4 +116,3 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
 
     except:
         print("Path not found!")
-
