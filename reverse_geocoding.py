@@ -134,7 +134,7 @@ def create_graph(mrt_response_json, name='unnamed', retain_all=True, bidirection
 punggol = (1.403948, 103.909048)
 distance = 2000
 
-G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive', simplify=True)
+G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive', simplify=False)
 mrt_query_str = '[out:json][timeout:180];(relation["network"="Singapore Rail"]["route"="monorail"](1.4011,103.8977,1.4154,103.9231);>;);out;'
 mrt_response_json = overpass_request(data={'data': mrt_query_str}, timeout=180)
 G_lrt = create_graph(mrt_response_json)
@@ -160,11 +160,11 @@ for k in mrtNodeList:  # check for nodes which are stations
     except:  # to catch and skip noneType iterations
         continue
 
-
 locator = Nominatim(user_agent="myGeocoder", timeout=20)
 
 building = {}
 autofillList = []
+count = 0
 # testing algorithmn speed
 start_time = time.time()
 for k in walkNodeList:
@@ -176,13 +176,14 @@ for k in walkNodeList:
         autofillList.append(location[0])
     else:
         continue
+    if count == 100:
+        break
 
 for item in mrtNodeList:
     try:
         if "PE" in item.get('ref') or "PW" in item.get('ref'):
             coordinates = item.get('y'), item.get('x')
             location = locator.reverse(coordinates)
-            print(location[0])
             autofillList.append(location[0])
     except:  # to catch and skip noneType iterations
         continue
@@ -190,7 +191,6 @@ autofillList.append('Punggol')
 
 print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
 
-# print(walkNodeList)
 print(autofillList)
 df = pd.DataFrame(walkNodeList)
-df.to_csv('data/rg_walk_node.csv', index=False)
+df.to_csv('data/rg_test_walk_node.csv')
