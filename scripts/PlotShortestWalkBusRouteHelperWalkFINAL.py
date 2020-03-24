@@ -11,27 +11,14 @@ def plotWalk(start, end):
     G = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
     # storing all nodes into a list
-    nodeList = list(G.nodes.values())
     edgeList = list(G.edges.items())
 
-    # finding start and end point in the list and storing into variables
     start = (float(start[0]), float(start[1]))
     end = (float(end[0]), float(end[1]))
 
-    startosmid = None
-    endosmid = None
+    startosmid = ox.get_nearest_node(G, start)
 
-    for i in range(0, len(nodeList)):
-        if (nodeList[i].get("x") == start[0]) and (nodeList[i].get("y") == start[1]):
-            startosmid = nodeList[i].get("osmid")
-        if (nodeList[i].get("x") == end[0]) and (nodeList[i].get("y") == end[1]):
-            endosmid = nodeList[i].get("osmid")
-
-    if startosmid is None:
-        startosmid = ox.get_nearest_node(G, start)
-
-    if endosmid is None:
-        endosmid = ox.get_nearest_node(G, end)
+    endosmid = ox.get_nearest_node(G, end)
 
     final = dijkstra(startosmid, endosmid, edgeList)
 
