@@ -165,6 +165,7 @@ locator = Nominatim(user_agent="myGeocoder", timeout=20)
 building = {}
 autofillList = []
 count = 0
+
 # testing algorithmn speed
 start_time = time.time()
 for k in walkNodeList:
