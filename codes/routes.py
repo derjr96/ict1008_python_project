@@ -2,7 +2,7 @@ from flask import render_template, request, redirect
 from codes import app
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
-
+import codes.PlotShortestWalkBusRoute as DjWalkBus
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/home", methods=["GET", "POST"])
@@ -27,13 +27,12 @@ def home():
             asawl = AstarWalkMrtAlgo(address_input, address_input1)  # astar walk with mrt
             asawl.generate()
             redirect("/walkinglrt")
-        # if str(request.form["dropdown"]) == "walkbus":
-        #     dropdown = str(request.form["dropdown"])  #dropdown value
-        #     print(address_input, "-->", address_input1)
-        #     print(dropdown)
-        #     #dijkbus = WalkBus(address_input, address_input1) #add a new class for dijkbus
-        #     #dijkbus.generate()
-        #     redirect("/walkingbus")
+        if str(request.form["dropdown"]) == "WalkandBus":
+            dropdown = str(request.form["dropdown"])  #dropdown value
+            print(address_input, "-->", address_input1)
+            print(dropdown)
+            DjWalkBus.plotShortestWalkBus(address_input, address_input1)
+            redirect("/walkingbus")
         # if request.form["dropdown"] == "walk":
         #     address_input = str(request.form["address_input"])  # src
         #     address_input1 = str(request.form["address_input1"])  # dst
