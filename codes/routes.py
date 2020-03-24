@@ -3,6 +3,12 @@ from codes import app
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
+import osmnx as ox
+
+punggol = (1.403948, 103.909048)
+distance = 2000
+G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
+
 
 @app.route("/", methods=["GET", "POST"])
 @app.route("/home", methods=["GET", "POST"])
@@ -17,7 +23,7 @@ def home():
             dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
-            aswa = AstarWalkAlgo(address_input, address_input1)
+            aswa = AstarWalkAlgo(address_input, address_input1, G_walk)
             aswa.generate()
             redirect("/walking")
         if str(request.form["dropdown"]) == "WalkandMRT":

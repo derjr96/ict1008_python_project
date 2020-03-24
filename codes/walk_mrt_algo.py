@@ -46,7 +46,6 @@ class AstarWalkMrtAlgo:
                     node[useful_tag] = element['tags'][useful_tag]
         return node
 
-
     def parse_osm_nodes_paths(self, osm_data):
         """
         Construct dicts of nodes and paths with key=osmid and value=dict of
@@ -166,20 +165,17 @@ class AstarWalkMrtAlgo:
                 heapq.heappush(nearnode, (h, k.get("osmid")))
         return heapq.heappop(nearnode)
 
-
     # retrieving lat/lon coordinates for LRT via OSMID
     def mrtn_latlon(self, osmid):
         for k in self.mrtNodeList:
             if k.get("osmid") == osmid:
                 return k.get("y"), k.get("x")
 
-
     # retrieving lat/lon coordinates for walk via OSMID
     def walk_latlon(self, osmid):
         for k in self.walkNodeList:
             if k.get("osmid") == osmid:
                 return k.get("x"), k.get("y")
-
 
     # calculating heuristic between two lat/lon points
     def heuristic(self, start, end):
@@ -195,7 +191,6 @@ class AstarWalkMrtAlgo:
         dist = radius * c * 1000
 
         return dist
-
 
     # ASTAR ALGORITHM
     def lrt_astar(self, start_point, end_point, use):
@@ -251,7 +246,6 @@ class AstarWalkMrtAlgo:
                             # adding previous path to close path dict to prevent an infinite loop of short path
                             closepath[i[0][1]] = temp[3]
 
-
     # ASTAR ALGORITHM
     def walk_astar(self, start_point, end_point):
         closepath = {}
@@ -291,7 +285,6 @@ class AstarWalkMrtAlgo:
                             heapq.heappush(routeq, (h + cur_length + temp[1], cur_length + temp[1], temp[3], i[0][1]))
                             # adding previous path to close path dict to prevent an infinite loop of short path
                             closepath[i[0][1]] = temp[3]
-
 
     # conversion of route to coords
     def convertRoute(self, coords):
@@ -355,7 +348,7 @@ class AstarWalkMrtAlgo:
             # plotting map to folium
             m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
                                      popup_attribute="There is no LRT to bring you to your destination, please walk.")
-            #m.save('templates/astaralgo_walklrt.html')
+            # m.save('templates/astaralgo_walklrt.html')
             m.save('templates/default.html')
         else:
             reachLRT = ox.get_nearest_node(G_walk, self.mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
@@ -398,13 +391,14 @@ class AstarWalkMrtAlgo:
 
                 # converting all osmnx nodes to coordinates
                 walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                walkFromStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+                walkFromStation[0] = self.convertRoute(
+                    ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
                 lrtfirst[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
                 lrtsecond[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
 
                 # calculating estimated time, cost, distance to reach the destination
                 statDist = 10300 / 14
-                totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000    # convert to meters to km
+                totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000  # convert to meters to km
                 now = datetime.now()
                 timenow = now.strftime("%H")
                 waitTime = 0
@@ -414,18 +408,22 @@ class AstarWalkMrtAlgo:
                 else:
                     print("--- NON-PEAK HOUR ---")
                     waitTime = 7
-                self.lrtFareCal(totalDistLRT)    # call fare function
+                self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
-                totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
-                totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
-                estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
+                totatTimeLRT = numStation + (
+                            (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+                totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
+                estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
                 print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
                       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
 
                 # plotting on folium map
-                folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
-                folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
-                folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
+                folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1,
+                                tooltip="Change LRT at Punggol Station.").add_to(m)
+                folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1,
+                                tooltip="Continue here to your destination.").add_to(m)
+                folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1,
+                                tooltip="Transit LRT here!").add_to(m)
                 folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
                 folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
                 # m.save('templates/astaralgo_walklrt.html')
@@ -439,7 +437,8 @@ class AstarWalkMrtAlgo:
 
                 # converting all osmnx nodes to coordinates
                 walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                walkFromStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+                walkFromStation[0] = self.convertRoute(
+                    ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
                 lrtfinal[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
 
                 # calculating estimated time, cost, distance to reach the destination
@@ -457,7 +456,7 @@ class AstarWalkMrtAlgo:
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
                 totatTimeLRT = numStation + (
-                            (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+                        (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
                 print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +

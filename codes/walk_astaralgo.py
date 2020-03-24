@@ -5,7 +5,8 @@ import math
 
 
 class AstarWalkAlgo:
-    def __init__(self, s, d):
+    def __init__(self, s, d, G_walk):
+        self.G_walk = G_walk
         self.src = s
         self.des = d
 
@@ -78,13 +79,10 @@ class AstarWalkAlgo:
 
     def generate(self):
         # main code
-        punggol = (1.403948, 103.909048)
-        distance = 2000
-        G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
         # storing all nodes into a list
-        self.walkNodeList = list(G_walk.nodes.values())
-        self.walkEdgeList = list(G_walk.edges.items())
+        self.walkNodeList = list(self.G_walk.nodes.values())
+        self.walkEdgeList = list(self.G_walk.edges.items())
 
         # user input (GUI TEAM, user input in text area will be stored here)
         # src = "Punggol"  # punggol will return punggol mrt coordinates
@@ -92,8 +90,8 @@ class AstarWalkAlgo:
         startpoint = ox.geocode(self.src)
         endpoint = ox.geocode(self.des)
 
-        startosmid = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
-        endosmid = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
+        startosmid = ox.get_nearest_node(self.G_walk, startpoint, method='euclidean', return_dist=True)
+        endosmid = ox.get_nearest_node(self.G_walk, endpoint, method='euclidean', return_dist=True)
 
         # testing algorithmn speed
         start_time = time.time()
@@ -106,8 +104,7 @@ class AstarWalkAlgo:
         print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
 
         # plotting map to folium
-        print(final[0])
-        m = ox.plot_route_folium(G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
+        m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
         #m.save("templates/astar_walking.html")
         m.save("templates/default.html")
 
