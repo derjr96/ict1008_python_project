@@ -21,11 +21,17 @@ def convertRoute(coords):
 def plotShortestWalkBus(startLocation, endLocation):
     startTime = time.time()
 
+    startLocation = ox.geocode(startLocation)
+    endLocation = ox.geocode(endLocation)
+
+    startLocation = (str(startLocation[0]), str(startLocation[1]))
+    endLocation = (str(endLocation[0]), str(endLocation[1]))
+
     api = overpy.Overpass()
     punggol = (1.4041070, 103.9025242)
     distance = 3000
-    W = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
-    D = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive_service')
+    W = ox.graph_from_point(punggol, distance=distance, network_type='walk')
+    D = ox.graph_from_point(punggol, distance=distance, network_type='drive_service')
 
     startBusStopNode = None
     endBusStopNode = None
@@ -166,13 +172,11 @@ def plotShortestWalkBus(startLocation, endLocation):
 # 1. Punggol Green Primary - Punggol Bus Interchange ('1.4021', '103.89872') - ('1.40394', '103.90263') Checked
 # 2. Punggol Point Park - Punggol Bus Interchange ('1.4208568','103.9103653') - ('1.40394', '103.90263') Checked
 # 3. EdgeField Secondary - Oasis Terrace ('1.4005349','103.9016396') - ('1.40283','103.91279') Checked Best Result
+# 4. Punggol BUs Interchange - Oasis Terrace ('1.4021', '103.89872') - ('1.40283','103.91279') Checked
 
-startLocation = ('1.4005349', '103.9016396')
-endLocation = ('1.40283', '103.91279')
-
-try:
-    plotShortestWalkBus(startLocation, endLocation)
-except:
-    print("Please try again. Server load too high or too many request!\n")
-else:
-    print("Unable to find route!")
+# try:
+plotShortestWalkBus('Punggol', 'Block 612, Punggol Drive, Punggol')
+# except:
+#     print("Please try again. Server load too high or too many request!\n")
+# else:
+#     print("Unable to find route!")
