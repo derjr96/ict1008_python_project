@@ -42,7 +42,11 @@ def home():
         #     print(address_input, "-->", address_input1)
         #     redirect("/walking")
 
-    return render_template('base.html')
+        return render_template('base.html')
+
+    if request.method == "GET":
+        return render_template("home.html")
+
 
 
 @app.route("/test", methods=['POST'])
@@ -57,6 +61,11 @@ def test():
 @app.route("/walking")
 def walk():
     return render_template("astar_walking.html")
+
+
+@app.route("/default")
+def default():
+    return render_template("default.html")
 
 
 @app.route("/punggol")

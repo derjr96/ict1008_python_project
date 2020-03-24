@@ -355,7 +355,8 @@ class AstarWalkMrtAlgo:
             # plotting map to folium
             m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
                                      popup_attribute="There is no LRT to bring you to your destination, please walk.")
-            m.save('templates/astaralgo_walklrt.html')
+            #m.save('templates/astaralgo_walklrt.html')
+            m.save('templates/default.html')
         else:
             reachLRT = ox.get_nearest_node(G_walk, self.mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
             leaveLRT = ox.get_nearest_node(G_walk, self.mrtn_latlon(lrtend), method='euclidean', return_dist=True)
@@ -427,7 +428,8 @@ class AstarWalkMrtAlgo:
                 folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
                 folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
                 folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
-                m.save('templates/astaralgo_walklrt.html')
+                # m.save('templates/astaralgo_walklrt.html')
+                m.save('templates/default.html')
 
             else:  # if both stations are found on the same lrt loop
                 # algo testing walk and lrt
@@ -465,6 +467,7 @@ class AstarWalkMrtAlgo:
                 folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
                 folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
                 folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
-                m.save('templates/astaralgo_walklrt.html')
+                # m.save('templates/astaralgo_walklrt.html')
+                m.save('templates/default.html')
 
         print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
