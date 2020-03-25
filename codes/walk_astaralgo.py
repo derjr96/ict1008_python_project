@@ -5,13 +5,14 @@ import math
 
 
 class AstarWalkAlgo:
-    def __init__(self, s, d, G_walk):
+    def __init__(self, s, d, G_walk, walkNodeList, walkEdgeList):
         self.G_walk = G_walk
+
         self.src = s
         self.des = d
 
-        self.walkNodeList = []
-        self.walkEdgeList = []
+        self.walkNodeList = walkNodeList
+        self.walkEdgeList = walkEdgeList
 
     # retrieving lat/lon coordinates via OSMID
     def latlon(self, osmid):

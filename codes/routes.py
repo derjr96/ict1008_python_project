@@ -1,13 +1,8 @@
 from flask import render_template, request, redirect
-from codes import app
+from codes import app, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
-import osmnx as ox
-
-punggol = (1.403948, 103.909048)
-distance = 2000
-G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -23,18 +18,19 @@ def home():
             dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
-            aswa = AstarWalkAlgo(address_input, address_input1, G_walk)
+            aswa = AstarWalkAlgo(address_input, address_input1, G_walk, walkNodeList, walkEdgeList)
             aswa.generate()
             redirect("/walking")
         if str(request.form["dropdown"]) == "WalkandMRT":
-            dropdown = str(request.form["dropdown"])   # dropdown value
+            dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
-            asawl = AstarWalkMrtAlgo(address_input, address_input1)  # astar walk with mrt
+            asawl = AstarWalkMrtAlgo(address_input, address_input1, G_walk, G_lrt, walkNodeList, walkEdgeList,
+                                     mrtNodeList, mrtEdgeList)  # astar walk with mrt
             asawl.generate()
             redirect("/walkinglrt")
         if str(request.form["dropdown"]) == "WalkandBus":
-            dropdown = str(request.form["dropdown"])  #dropdown value
+            dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
             DjWalkBus.plotShortestWalkBus(address_input, address_input1)
@@ -53,7 +49,6 @@ def home():
         return render_template("home.html")
 
 
-
 @app.route("/test", methods=['POST'])
 def test():
     print(request.method)
@@ -65,7 +60,7 @@ def test():
 
 @app.route("/walking")
 def walk():
-    return render_template("astar_walking.html")
+    return render_template("default.html")
 
 
 @app.route("/default")
@@ -80,4 +75,4 @@ def punggol():
 
 @app.route("/walkinglrt")
 def walklrt():
-    return render_template('astaralgo_walklrt.html')
+    return render_template('default.html')
