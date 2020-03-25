@@ -1,16 +1,21 @@
 # ict1008_python_project <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
-- [Setting Up](#setting-up)
-  - [Manual Installation](#manual-installation)
-    - [Installing OSMnx](#installing-osmnx)
-    - [Installing Required Dependencies](#installing-required-dependencies)
-- [Project Details](#project-details)
-- [Milestones](#milestones)
-- [Collaborators](#collaborators)
+* [Path Find](#path-find)
+* [Getting Started](#getting-started)
+  * [Installing Environment](#installing-environment)
+    * [Creating an environment from an environment.yml file](#Creating-an-environment-from-an-environment.yml-file)
+  * [Manual Installation](#manual-installation)
+    * [Installing OSMnx](#installing-osmnx)
+    * [Installing Required Dependencies](#installing-required-dependencies)
+* [Built With](#built-with)
+* [Project Details](#project-details)
+* [Milestones](#milestones)
+* [Collaborators](#collaborators)
 
-## Project Title
+## Path Find
 
+**Path Find** is a Python application to help make travelling by public transport easier for all visiting or staying in Punggol Digital District. This application will help calculate the best path by shortest route. With this application, it will help users make better decisions when travelling around Punggol Digital District.
 
 ## Getting Started
 
