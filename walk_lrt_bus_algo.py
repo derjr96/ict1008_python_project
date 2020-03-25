@@ -342,8 +342,8 @@ lcoateEndLrt = ox.get_nearest_node(G_lrt, endpoint, method='euclidean', return_d
 lrtstart = lrt_nearnode(locateStrtLrt[0])[1]
 lrtend = lrt_nearnode(lcoateEndLrt[0])[1]
 
-if lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or \
-        (lrtstart == 6587709457 and lrtend == 6587709456):
+if (lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or (lrtstart == 6587709457 and
+            lrtend == 6587709456)): # and (start point bus stop node is same as end point):
     final = walk_astar(strtpt[0], endpt[0])
 
     # plotting map to folium
@@ -379,9 +379,6 @@ else:
     m = folium.Map(location=punggol, distance=distance, zoom_start=15)
 
     if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
-        # algo testing walk and lrt
-        walkToStation = walk_astar(strtpt[0], reachLRT[0])
-        walkFromStation = walk_astar(leaveLRT[0], endpt[0])
         if lrtstart in pw:
             lrtfirst = lrt_astar(lrt_nearnode(lrtstart)[1], 6587709456, "no")
             lrtsecond = lrt_astar(6587709457, lrt_nearnode(lrtend)[1], "yes")
@@ -389,76 +386,163 @@ else:
             lrtfirst = lrt_astar(lrt_nearnode(lrtstart)[1], 6587709457, "no")
             lrtsecond = lrt_astar(6587709456, lrt_nearnode(lrtend)[1], "yes")
 
-        # converting all osmnx nodes to coordinates
-        walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-        walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-        lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
-        lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+        if end lrt station bus stop node is same as ep bus stop (run code below):
+            # algo testing walk and lrt
+            walkToStation = walk_astar(strtpt[0], reachLRT[0])
+            walkFromStation = walk_astar(leaveLRT[0], endpt[0])
 
-        # calculating estimated time, cost, distance to reach the destination
-        statDist = 10300 / 14
-        totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000    # convert to meters to km
-        now = datetime.now()
-        timenow = now.strftime("%H")
-        waitTime = 0
-        if "10" > timenow > "6":
-            print("--- PEAK HOUR ---")
-            waitTime = 3
+            # converting all osmnx nodes to coordinates
+            walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+            walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+            lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
+            lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+
+            # calculating estimated time, cost, distance to reach the destination
+            statDist = 10300 / 14
+            totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000    # convert to meters to km
+            now = datetime.now()
+            timenow = now.strftime("%H")
+            waitTime = 0
+            if "10" > timenow > "6":
+                print("--- PEAK HOUR ---")
+                waitTime = 3
+            else:
+                print("--- NON-PEAK HOUR ---")
+                waitTime = 7
+            lrtFareCal(totalDistLRT)    # call fare function
+            numStation = math.floor(totalDistLRT / statDist + 2)
+            totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
+            totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
+            estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
+            print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                  str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+
+            # plotting on folium map
+            folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
+            folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
+            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
+            folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+            m.save('templates/astaralgo_walklrt.html')
         else:
-            print("--- NON-PEAK HOUR ---")
-            waitTime = 7
-        lrtFareCal(totalDistLRT)    # call fare function
-        numStation = math.floor(totalDistLRT / statDist + 2)
-        totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
-        totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
-        estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
-        print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-              str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+            # algo testing walk and lrt
+            walkToStation = walk_astar(strtpt[0], reachLRT[0])
+            bus = ALGO HERE(LRT BUS STOP, END POINT BUS STOP)
+            walkFromBusStop = walk_astar((END POINT BUS STOP), endpt[0])
 
-        # plotting on folium map
-        folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
-        folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
-        folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
-        folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=4, opacity=1).add_to(m)
-        m.save('templates/astaralgo_walklrt.html')
+            # converting all osmnx nodes to coordinates
+            walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+            walkFromBusStop[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
+            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_BUS?, bus))
+            lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
+            lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+
+            # calculating estimated time, cost, distance to reach the destination
+            statDist = 10300 / 14
+            totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000  # convert to meters to km
+            now = datetime.now()
+            timenow = now.strftime("%H")
+            waitTime = 0
+            if "10" > timenow > "6":
+                print("--- PEAK HOUR ---")
+                waitTime = 3
+            else:
+                print("--- NON-PEAK HOUR ---")
+                waitTime = 7
+            lrtFareCal(totalDistLRT)  # call fare function
+            numStation = math.floor(totalDistLRT / statDist + 2)
+            totatTimeLRT = numStation + (
+                        (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+            totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
+            estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+            print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                  str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+
+            # plotting on folium map
+            folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1,
+                            tooltip="Change LRT at Punggol Station.").add_to(m)
+            folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1,
+                            tooltip="Continue here to your destination.").add_to(m)
+            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1,
+                            tooltip="Transit LRT here!").add_to(m)
+            folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(([lrtsecond[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
+            m.save('templates/astaralgo_walklrt.html')
 
     else:  # if both stations are found on the same lrt loop
         # algo testing walk and lrt
-        walkToStation = walk_astar(strtpt[0], reachLRT[0])
-        walkFromStation = walk_astar(leaveLRT[0], endpt[0])
         lrtfinal = lrt_astar(lrt_nearnode(lrtstart)[1], lrt_nearnode(lrtend)[1], "no")
+        if end lrt station bus stop node is same as ep bus stop (run code below):
+            walkToStation = walk_astar(strtpt[0], reachLRT[0])
+            walkFromStation = walk_astar(leaveLRT[0], endpt[0])
 
-        # converting all osmnx nodes to coordinates
-        walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-        walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-        lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
+            # converting all osmnx nodes to coordinates
+            walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+            walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+            lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
 
-        # calculating estimated time, cost, distance to reach the destination
-        statDist = 10300 / 14
-        totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
-        now = datetime.now()
-        timenow = now.strftime("%H")
-        waitTime = 0
-        if "10" > timenow > "6":
-            print("--- PEAK HOUR ---")
-            waitTime = 3
+            # calculating estimated time, cost, distance to reach the destination
+            statDist = 10300 / 14
+            totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
+            now = datetime.now()
+            timenow = now.strftime("%H")
+            waitTime = 0
+            if "10" > timenow > "6":
+                print("--- PEAK HOUR ---")
+                waitTime = 3
+            else:
+                print("--- NON-PEAK HOUR ---")
+                waitTime = 7
+            lrtFareCal(totalDistLRT)  # call fare function
+            numStation = math.floor(totalDistLRT / statDist + 2)
+            totatTimeLRT = numStation + (
+                        (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+            totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
+            estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+            print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                  str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+
+            # plotting map to folium
+            folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
+            folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+            m.save('templates/astaralgo_walklrt.html')
         else:
-            print("--- NON-PEAK HOUR ---")
-            waitTime = 7
-        lrtFareCal(totalDistLRT)  # call fare function
-        numStation = math.floor(totalDistLRT / statDist + 2)
-        totatTimeLRT = numStation + (
-                    (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
-        totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
-        estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-        print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-              str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+            walkToStation = walk_astar(strtpt[0], reachLRT[0])
+            bus = ALGO HERE(LRT BUS STOP, END POINT BUS STOP)
+            walkFromBusStop = walk_astar((END POINT BUS STOP), endpt[0])
 
-        # plotting map to folium
-        folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-        folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=4, opacity=1).add_to(m)
-        m.save('templates/astaralgo_walklrt.html')
+            # converting all osmnx nodes to coordinates
+            walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
+            walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
+            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_BUS?, bus))
+            lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
+
+            # calculating estimated time, cost, distance to reach the destination
+            statDist = 10300 / 14
+            totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
+            now = datetime.now()
+            timenow = now.strftime("%H")
+            waitTime = 0
+            if "10" > timenow > "6":
+                print("--- PEAK HOUR ---")
+                waitTime = 3
+            else:
+                print("--- NON-PEAK HOUR ---")
+                waitTime = 7
+            lrtFareCal(totalDistLRT)  # call fare function
+            numStation = math.floor(totalDistLRT / statDist + 2)
+            totatTimeLRT = numStation + (
+                    (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+            totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
+            estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+            print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                  str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+
+            # plotting map to folium
+            folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
+            folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(([lrtfinal[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
+            m.save('templates/astaralgo_walklrt.html')
 
 print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))

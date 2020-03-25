@@ -288,14 +288,16 @@ class AstarWalkMrtAlgo:
                       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
 
                 # plotting on folium map
-                folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1,
+                folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
                                 tooltip="Change LRT at Punggol Station.").add_to(m)
-                folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1,
+                folium.PolyLine(lrtsecond[0], color="red", weight=2, opacity=1,
                                 tooltip="Continue here to your destination.").add_to(m)
-                folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1,
+                folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=2, opacity=1,
                                 tooltip="Transit LRT here!").add_to(m)
-                folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-                folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+                folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue",
+                                weight=2, opacity=1).add_to(m)
+                folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue",
+                                weight=2, opacity=1).add_to(m)
                 # m.save('templates/astaralgo_walklrt.html')
                 m.save('templates/default.html')
 
@@ -333,9 +335,11 @@ class AstarWalkMrtAlgo:
                       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
 
                 # plotting map to folium
-                folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-                folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-                folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+                folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
+                folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue",
+                                weight=2, opacity=1).add_to(m)
+                folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue",
+                                weight=2, opacity=1).add_to(m)
                 # m.save('templates/astaralgo_walklrt.html')
                 m.save('templates/default.html')
 
