@@ -84,7 +84,7 @@ walkEdgeList = list(G_walk.edges.items())
 
 # user input (GUI TEAM, user input in text area will be stored here)
 src = "Punggol"  # punggol will return punggol mrt coordinates
-des = "Blk 612, Punggol Drive, Punggol"  # random hdb
+des = "406B, Northshore Drive, Punggol"  # random hdb
 startpoint = ox.geocode(src)
 endpoint = ox.geocode(des)
 
