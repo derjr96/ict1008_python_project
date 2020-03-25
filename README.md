@@ -9,15 +9,22 @@
 - [Milestones](#milestones)
 - [Collaborators](#collaborators)
 
-## Setting Up
+## Project Title
+
+
+## Getting Started
+
 ### Installing Environment
+
     Recommended to create environment from environment.yml, if this does not work, you would have to do it manually
+
 #### Creating an environment from an environment.yml file
+
 1. [Install](https://www.anaconda.com/distribution/) Anaconda for Python 3.7. (Ensure you have Anaconda first)
 
 2. Use the terminal or an Anaconda Prompt for the following steps:
 
-- Create the environment from the environment.yml file:
+* Create the environment from the environment.yml file:
 
   1.      conda env create -f environment.yml
 
@@ -32,7 +39,9 @@
       You can also use conda info --envs.
 
 ### Manual Installation
+
 #### Installing OSMnx
+
 1. [Install](https://www.anaconda.com/distribution/) Anaconda for Python 3.7.
 2. Set up a new virtual environment i.e DSAProjectVE, try not to touch root virtual environment. Once Virtual Environment is set up, do the following:
 
@@ -60,27 +69,40 @@
 5. You should be all set!
 
 #### Installing Required Dependencies
+
 In your pycharm terminal tab:
--     pip install overpy
--     pip install Flask
--     pip install heapq
--     pip install folium
+*     pip install overpy
+*     pip install Flask
+*     pip install heapq
+*     pip install folium
+
+## Built With
+
+* [Python 3.7](https://docs.python.org/3.7/) - Language used
+* [Flask](https://flask.palletsprojects.com/en/1.1.x/) - The web framework used
+* [Geopy](https://geopy.readthedocs.io/en/stable/) - Used for geocoding and reverse geocoding
+* [Folium](https://python-visualization.github.io/folium/) - Used for rendering of map
+* [Osmnx](https://osmnx.readthedocs.io/en/stable/) - Graph creation
 
 ## Project Details
+
 Implementing and plotting network
-- [X] **Walking**
-- [X] **Bus**
-- [X] **MRT**
+* [X] **Walking**
+* [X] **Walk + Bus**
+* [X] **Walk + LRT**
+* [ ] **Walk + LRT + Bus**
 
 ## Milestones
-- [X] Planning
-- [X] Execute own parts
-- [X] Implementation
-- [ ] Integration
-- [ ] Debugging
-- [ ] Code Cleanup (Remove unnecessary shit)
 
-## Collaborators
+* [X] Planning
+* [X] Execute own parts
+* [X] Implementation
+* [ ] Integration
+* [ ] Debugging
+* [ ] Code Cleanup (Remove unnecessary shit)
+
+## Collaborators with Contributions
+
 1. **Darrell Er** | [@derjr96](https://github.com/derjr96) | Dijkstra and A* Algorithm, MRT + Walk & Walk
 2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) | Bus + Walk
 3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan) | GUI
