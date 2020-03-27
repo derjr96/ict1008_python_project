@@ -14,6 +14,9 @@ def after_request(response):
 @app.route("/", methods=["GET", "POST"])
 def home():
     print(request.method)
+    anything = 0
+    anything1 = 0
+    anything2 = 0
     if request.method == "POST":
         address_input = str(request.form["address_input"])  # src
         address_input1 = str(request.form["address_input1"])  # dst
@@ -25,6 +28,9 @@ def home():
             print(dropdown)
             aswa = AstarWalkAlgo(address_input, address_input1, G_walk, walkNodeList, walkEdgeList)
             aswa.generate()
+            anything = aswa.printout()[0]
+            anything1 = aswa.printout()[1]
+            anything2 = aswa.printout()[2]
             # redirect("/walking")
         elif str(request.form["dropdown"]) == "WalkandMRT":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -42,7 +48,7 @@ def home():
             DjWalkBus.plotShortestWalkBus(address_input, address_input1)
             # redirect("/walkingbus")
 
-        return render_template("base.html")
+        return render_template("base.html", variable = anything, variable1 = anything1, variable2 = anything2)
     elif request.method == "GET":
         return render_template("home.html")
 

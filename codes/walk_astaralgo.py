@@ -10,7 +10,9 @@ class AstarWalkAlgo:
 
         self.src = s
         self.des = d
-
+        self.variable = 0
+        self.variable1 = 0
+        self.variable2 = 0
         self.walkNodeList = walkNodeList
         self.walkEdgeList = walkEdgeList
 
@@ -104,12 +106,18 @@ class AstarWalkAlgo:
         estwalk = totaldist / (1.4 * 60)
         print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
 
+        self.variable = str(round((time.time() - start_time), 2))
+        self.variable1 = str(round(estwalk))
+        self.variable2 = str(round((totaldist/1000), 2))
+
         # plotting map to folium
         m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
         #m.save("templates/astar_walking.html")
         m.save("templates/default.html")
         print("Successfully overwrite default.html!!!")
 
+    def printout(self):
+        return [self.variable, self.variable1, self.variable2]
 
 # aswa = AstarWalkAlgo("Punggol", "Blk 612, Punggol Drive, Punggol")
 # aswa.generate()
