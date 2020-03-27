@@ -108,6 +108,7 @@ class AstarWalkAlgo:
         m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
         #m.save("templates/astar_walking.html")
         m.save("templates/default.html")
+        print("Successfully overwrite default.html!!!")
 
 
 # aswa = AstarWalkAlgo("Punggol", "Blk 612, Punggol Drive, Punggol")

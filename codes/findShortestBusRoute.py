@@ -109,10 +109,13 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
 
         print("Time for Dijkstra Bus Takes: ", round(time.time() - startTime, 2))
 
-        if len(graph.dijkstra(startBusStopCode, endBusStopCode)) == 0:
+        result = graph.dijkstra(startBusStopCode, endBusStopCode)
+
+        if len(result) == 0:
             print("Path not found!")
         else:
-            return graph.dijkstra(startBusStopCode, endBusStopCode)
+            return result
 
     except:
         print("Path not found!")
+
