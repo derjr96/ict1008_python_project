@@ -14,18 +14,19 @@ def after_request(response):
 @app.route("/", methods=["GET", "POST"])
 def home():
     print(request.method)
-    #for walk output
-    # anything = 0
-    # anything1 = 0
-    # anything2 = 0
 
-    #for walk and lrt output
-    anything0 = 0
-    anything1 = 0
-    anything2 = 0
-    anything3 = 0
-    anything4 = 0
-    anything5 = 0
+    #walk
+    walkvalue = 0
+    walkvalue1 = 0
+    walkvalue2 = 0
+
+    #walk and mrt
+    walklrtvalue = 0
+    walklrtvalue1 = 0
+    walklrtvalue2 = 0
+    walklrtvalue3 = 0
+    walklrtvalue4 = 0
+    walklrtvalue5 = 0
     if request.method == "POST":
         address_input = str(request.form["address_input"])  # src
         address_input1 = str(request.form["address_input1"])  # dst
@@ -38,9 +39,10 @@ def home():
             aswa = AstarWalkAlgo(address_input, address_input1, G_walk, walkNodeList, walkEdgeList)
             aswa.generate()
             #for walk output
-            # anything = aswa.printout()[0]
-            # anything1 = aswa.printout()[1]
-            # anything2 = aswa.printout()[2]
+            walkvalue  = aswa.printout()[0]
+            walkvalue1 = aswa.printout()[1]
+            walkvalue2 = aswa.printout()[2]
+            return render_template("base.html", walkvariable = walkvalue, walkvariable1 = walkvalue1, walkvariable2 = walkvalue2)
             # redirect("/walking")
         elif str(request.form["dropdown"]) == "WalkandMRT":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -50,13 +52,13 @@ def home():
                                      mrtNodeList, mrtEdgeList)  # astar walk with mrt
             asawl.generate()
             #for walk and lrt output
-            anything0 = asawl.printout2()[0]
-            anything1 = asawl.printout2()[1]
-            anything2 = asawl.printout2()[2]
-            anything3 = asawl.printout2()[3]
-            anything4 = asawl.printout2()[4]
-            anything5 = asawl.printout2()[5]
-
+            walklrtvalue = asawl.printout2()[0]
+            walklrtvalue1 = asawl.printout2()[1]
+            walklrtvalue2 = asawl.printout2()[2]
+            walklrtvalue3 = asawl.printout2()[3]
+            walklrtvalue4 = asawl.printout2()[4]
+            walklrtvalue5 = asawl.printout2()[5]
+            return render_template("base.html", wlvariable = walklrtvalue, wlvariable1 = walklrtvalue1, wlvariable2 = walklrtvalue2, wlvariable3 = walklrtvalue3, wlvariable4= walklrtvalue4, wlvariable5 = walklrtvalue5)
             # redirect("/walkinglrt")
         elif str(request.form["dropdown"]) == "WalkandBus":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -66,11 +68,8 @@ def home():
             DjWalkBus.plotShortestWalkBus(address_input, address_input1)
             # redirect("/walkingbus")
 
-        #for walk output
-        #return render_template("base.html", variable = anything, variable1 = anything1, variable2 = anything2)
-
-        #for walk and lrt output
-        return render_template("base.html", variable = anything0, variable1 = anything1, variable2 = anything2, variable3 = anything3, variable4= anything4, variable5 = anything5)
+        
+        return render_template("base.html")
     elif request.method == "GET":
         return render_template("home.html")
 

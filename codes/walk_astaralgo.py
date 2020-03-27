@@ -10,9 +10,9 @@ class AstarWalkAlgo:
 
         self.src = s
         self.des = d
-        self.variable = 0
-        self.variable1 = 0
-        self.variable2 = 0
+        self.walkvariable = 0
+        self.walkvariable1 = 0
+        self.walkvariable2 = 0
         self.walkNodeList = walkNodeList
         self.walkEdgeList = walkEdgeList
 
@@ -100,15 +100,14 @@ class AstarWalkAlgo:
         start_time = time.time()
         final = self.walk_astar(startosmid[0], endosmid[0])
         print("--- %s seconds ---" % round((time.time() - start_time), 2))
+        self.walkvariable = ("Time taken for run the algorithm: %s seconds" % round((time.time() - start_time), 2))
 
         # calculating estimated time to reach the destination taking avg human walking speed of 1.4m/s
         totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
         estwalk = totaldist / (1.4 * 60)
         print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
-
-        self.variable = str(round((time.time() - start_time), 2))
-        self.variable1 = str(round(estwalk))
-        self.variable2 = str(round((totaldist/1000), 2))
+        self.walkvariable1 = ("Time taken: " + str(round(estwalk)) + " minutes") 
+        self.walkvariable2 = ("Distance travelled: " + str(round((totaldist / 1000), 2)) + " km")
 
         # plotting map to folium
         m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
@@ -117,7 +116,7 @@ class AstarWalkAlgo:
         print("Successfully overwrite default.html!!!")
 
     def printout(self):
-        return [self.variable, self.variable1, self.variable2]
+        return [self.walkvariable, self.walkvariable1, self.walkvariable2]
 
 # aswa = AstarWalkAlgo("Punggol", "Blk 612, Punggol Drive, Punggol")
 # aswa.generate()
