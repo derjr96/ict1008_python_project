@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect, make_response
-from codes import app, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList
+from codes import app, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
 from flask_caching import Cache
+
 
 @app.after_request
 def after_request(response):
@@ -65,7 +66,7 @@ def home():
             print(address_input, "-->", address_input1)
             print(dropdown)
             print(type(address_input))
-            DjWalkBus.plotShortestWalkBus(address_input, address_input1)
+            DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
             # redirect("/walkingbus")
 
         
@@ -91,4 +92,3 @@ def default():
 @app.route("/punggol")
 def punggol():
     return render_template('punggol.html')
-

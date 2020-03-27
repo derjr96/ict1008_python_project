@@ -7,6 +7,7 @@ from osmnx.utils import log
 from osmnx.geo_utils import get_largest_component
 from osmnx.downloader import overpass_request
 from osmnx.errors import *
+# from codes import routes
 
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
@@ -140,6 +141,10 @@ print("Creating Walk MultiDiGraph...")
 
 G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
+print("Creating Bus MultiDiGraph...")
+
+G_bus = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive_service')
+
 print("Storing Walk MultiDiGraph...")
 walkNodeList = list(G_walk.nodes.values())
 walkEdgeList = list(G_walk.edges.items())
@@ -157,4 +162,3 @@ mrtEdgeList = list(G_lrt.edges.items())
 print("LRT MultiDiGraph Created and Stored!\nAll MultiDiGraph Created and Stored.")
 
 
-from codes import routes
