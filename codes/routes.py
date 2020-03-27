@@ -6,7 +6,7 @@ import codes.PlotShortestWalkBusRoute as DjWalkBus
 
 
 @app.route("/", methods=["GET", "POST"])
-@app.route("/home", methods=["GET", "POST"])
+# @app.route("/home", methods=["GET", "POST"])
 def home():
     print(request.method)
     if request.method == "POST":
