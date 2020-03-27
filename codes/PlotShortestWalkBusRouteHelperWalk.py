@@ -13,6 +13,8 @@ def plotWalk(start, end):
     # storing all nodes into a list
     edgeList = list(G.edges.items())
 
+    start = (float(start[0]), float(start[1]))
+    end = (float(end[0]), float(end[1]))
 
     startosmid = ox.get_nearest_node(G, start)
 
