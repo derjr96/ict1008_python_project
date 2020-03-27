@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect, make_response
-from codes import app, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList
+from codes import app, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
 from flask_caching import Cache
+
 
 @app.after_request
 def after_request(response):
@@ -14,12 +15,12 @@ def after_request(response):
 @app.route("/", methods=["GET", "POST"])
 def home():
     print(request.method)
-    #for walk output
+    # for walk output
     # anything = 0
     # anything1 = 0
     # anything2 = 0
 
-    #for walk and lrt output
+    # for walk and lrt output
     anything0 = 0
     anything1 = 0
     anything2 = 0
@@ -37,7 +38,7 @@ def home():
             print(dropdown)
             aswa = AstarWalkAlgo(address_input, address_input1, G_walk, walkNodeList, walkEdgeList)
             aswa.generate()
-            #for walk output
+            # for walk output
             # anything = aswa.printout()[0]
             # anything1 = aswa.printout()[1]
             # anything2 = aswa.printout()[2]
@@ -49,7 +50,7 @@ def home():
             asawl = AstarWalkMrtAlgo(address_input, address_input1, G_walk, G_lrt, walkNodeList, walkEdgeList,
                                      mrtNodeList, mrtEdgeList)  # astar walk with mrt
             asawl.generate()
-            #for walk and lrt output
+            # for walk and lrt output
             anything0 = asawl.printout2()[0]
             anything1 = asawl.printout2()[1]
             anything2 = asawl.printout2()[2]
@@ -63,14 +64,15 @@ def home():
             print(address_input, "-->", address_input1)
             print(dropdown)
             print(type(address_input))
-            DjWalkBus.plotShortestWalkBus(address_input, address_input1)
+            DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
             # redirect("/walkingbus")
 
-        #for walk output
-        #return render_template("base.html", variable = anything, variable1 = anything1, variable2 = anything2)
+        # for walk output
+        # return render_template("base.html", variable = anything, variable1 = anything1, variable2 = anything2)
 
-        #for walk and lrt output
-        return render_template("base.html", variable = anything0, variable1 = anything1, variable2 = anything2, variable3 = anything3, variable4= anything4, variable5 = anything5)
+        # for walk and lrt output
+        return render_template("base.html", variable=anything0, variable1=anything1, variable2=anything2,
+                               variable3=anything3, variable4=anything4, variable5=anything5)
     elif request.method == "GET":
         return render_template("home.html")
 
@@ -92,4 +94,3 @@ def default():
 @app.route("/punggol")
 def punggol():
     return render_template('punggol.html')
-
