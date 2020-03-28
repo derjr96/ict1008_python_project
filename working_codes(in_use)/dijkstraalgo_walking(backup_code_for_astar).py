@@ -1,7 +1,4 @@
-from flask import Flask
 import folium
-from collections import deque, namedtuple
-import pandas as pd
 import osmnx as ox
 import heapq
 import time
