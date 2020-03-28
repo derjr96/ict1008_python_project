@@ -1,17 +1,18 @@
-# ict1008_python_project <!-- omit in toc -->
+# ICT1008 Python Project (DSA)<!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 * [Path Find](#path-find)
 * [Getting Started](#getting-started)
   * [Installing Environment](#installing-environment)
-    * [Creating an environment from an environment.yml file](#Creating-an-environment-from-an-environment.yml-file)
+    * [With the use of a YML file](#with-the-use-of-a-yml-file)
   * [Manual Installation](#manual-installation)
     * [Installing OSMnx](#installing-osmnx)
     * [Installing Required Dependencies](#installing-required-dependencies)
+* [Running Application](#running-application)
 * [Built With](#built-with)
 * [Project Details](#project-details)
 * [Milestones](#milestones)
-* [Collaborators](#collaborators)
+* [Collaborators with Contributions](#collaborators-with-contributions)
 
 ## Path Find
 
@@ -23,7 +24,7 @@
 
     Recommended to create environment from environment.yml, if this does not work, you would have to do it manually
 
-#### Creating an environment from an environment.yml file
+#### With the use of a YML file
 
 1. [Install](https://www.anaconda.com/distribution/) Anaconda for Python 3.7. (Ensure you have Anaconda first)
 
@@ -81,6 +82,12 @@ In your pycharm terminal tab:
 *     pip install heapq
 *     pip install folium
 
+## Running Application
+
+    Run the python file "run.py"
+    
+**Do take note that the application will take awhile to start up. Due to the creations of multi-dimensional graphs**
+
 ## Built With
 
 * [Python 3.7](https://docs.python.org/3.7/) - Language used
@@ -92,10 +99,10 @@ In your pycharm terminal tab:
 ## Project Details
 
 Implementing and plotting network
-* [X] **Walking**
-* [X] **Walk + Bus**
-* [X] **Walk + LRT**
-* [ ] **Walk + LRT + Bus**
+* [X] **Walk Network**
+* [X] **Walk + Bus Network**
+* [X] **Walk + LRT Network**
+* [X] **Walk + LRT + Bus Network**
 
 ## Milestones
 
@@ -104,9 +111,12 @@ Implementing and plotting network
 * [X] Implementation
 * [ ] Integration
 * [ ] Debugging
-* [ ] Code Cleanup (Remove unnecessary shit)
+* [ ] Code Cleanup
+* [ ] Poster
+* [ ] Video
 
 ## Collaborators with Contributions
+**TEAM 1-2** 
 
 1. **Darrell Er** | [@derjr96](https://github.com/derjr96) | Dijkstra and A* Algorithm, MRT + Walk & Walk
 2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) | Bus + Walk
