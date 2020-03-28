@@ -25784,6 +25784,13 @@
             "RoadName": "Punggol Way"
         },
         {
+            "BusStopCode": "65689",
+            "Description": "After Northshore Crescent",
+            "Latitude": 1.41824,
+            "Longitude": 103.90806,
+            "RoadName": "Northshore Drive"
+        },
+        {
             "BusStopCode": "65801",
             "Description": "Blk 309D",
             "Latitude": 1.3904399999914,

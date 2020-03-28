@@ -54,4 +54,4 @@ def findPath(G, paths):
 
     print("Bus Route Retrieval Takes: ", round((endTime - startTime), 2))
 
-    return route, listOfTuplesStartEndLatLon
+    return route

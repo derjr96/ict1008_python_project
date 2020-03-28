@@ -72,7 +72,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
             endBusStopCode = endBusStopNode.tags['asset_ref']
         else:
             endBusStopNode = None
-            radius += 50
+            radius += 100
 
     # Find path of FINAL WALK from BUS STOP to DESTINATION
     try:
@@ -84,8 +84,6 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
     try:
         paths = findShortestBusRoute.findShortestBusRoute(int(startBusStopCode), int(endBusStopCode))
         busRouteToPlot = plotShortestBusRoute.findPath(D, paths)
-        forPlotNode = busRouteToPlot[1]
-        busRouteToPlot = busRouteToPlot[0]
     except:
         print("Cannot find bus route. Missing Map Data")
 
@@ -143,17 +141,11 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         for i in range(len(busServices)):
             busServices[i] = plotShortestBusRoute.removeDupes(busServices[i])
 
-        # Get long and lat of all the individual busstops/nodes
-        nodesLatLongs = []
-        for i in range(len(forPlotNode)):
-            nodesLatLongs.append((forPlotNode[i][0][0], forPlotNode[i][0][1]))
-        nodesLatLongs.append((forPlotNode[-1][1][0], forPlotNode[-1][1][1]))
-
         # Create the node with the datas
-        for i in nodesLatLongs:
+        for i in paths:
             for z in data['value']:
                 if int(z['BusStopCode']) == paths[count]:
-                    folium.Marker(location=[i[0], i[1]], popup=folium.Popup
+                    folium.Marker(location=[z['Latitude'], z['Longitude']], popup=folium.Popup
                     (("<div>" + z['Description'] + "</div>" + "Buses: " + str(busServices[count]).strip(
                         "[]").replace("'", '')), max_width=450),
                                   icon=folium.Icon(color='red', icon='bus', prefix='fa')).add_to(m)
