@@ -64,8 +64,8 @@ def home():
             dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
-            algoTime = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
-            return render_template("base.html", wlvariable = algoTime[0])
+            result = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
+            return render_template("base.html", wlvariable = result[0], wlvariable1 = result[1])
             # redirect("/walkingbus")
 
 

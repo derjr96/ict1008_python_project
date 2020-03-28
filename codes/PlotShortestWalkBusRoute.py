@@ -170,6 +170,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         totalTime = [("Total calculation time: " + str(round(endTime - startTime, 2))) + " seconds"]
         print("Plotting of Map takes: ", round(endTime - plotTime, 2))
         print("Time taken: ", round(endTime - startTime, 2))
+        totalTime.append("Click each node for bus information")
         return totalTime
 
 # Test Cases (NOT ALL BUS STOPS ARE ON OSM OR ARE ACCURATE. MANUAL ADDITION OF MAP DATA ONLINE:
