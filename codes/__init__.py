@@ -7,8 +7,6 @@ from osmnx.utils import log
 from osmnx.geo_utils import get_largest_component
 from osmnx.downloader import overpass_request
 from osmnx.errors import *
-# from codes import routes
-
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
@@ -161,4 +159,5 @@ mrtEdgeList = list(G_lrt.edges.items())
 
 print("LRT MultiDiGraph Created and Stored!\nAll MultiDiGraph Created and Stored.")
 
+from codes import routes
 
