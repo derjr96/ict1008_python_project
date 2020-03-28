@@ -16,6 +16,14 @@ class AstarWalkMrtAlgo:
         self.walkEdgeList = walkEdgeList
         self.mrtEdgeList = mrtEdgeList
 
+        # for walk and mrt output
+        self.wlvariable = 0
+        self.wlvariable1 = 0
+        self.wlvariable2 = 0
+        self.wlvariable3 = 0
+        self.wlvariable4 = 0
+        self.wlvariable5 = 0
+
         self.src = s
         self.des = d
 
@@ -25,18 +33,30 @@ class AstarWalkMrtAlgo:
             print("Student Fare: $0.42")
             print("Adult Fare: $0.92")
             print("Senior Citizen Fare: $0.59")
+            self.wlvariable1 = "Student Fare: $0.42"
+            self.wlvariable2 = "Adult Fare: $0.92"
+            self.wlvariable3 = "Senior Citizen Fare: $0.59"
         elif 4.2 >= distance > 3.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.02")
             print("Senior Citizen Fare: $0.66")
+            self.wlvariable1 = "Student Fare: $0.47"
+            self.wlvariable2 = "Adult Fare: $1.02"
+            self.wlvariable3 = "Senior Citizen Fare: $0.66"
         elif 5.2 >= distance > 4.2:
             print("Student Fare: $0.52")
             print("Adult Fare: $1.12")
             print("Senior Citizen Fare: $0.73")
+            self.wlvariable1 = "Student Fare: $0.52"
+            self.wlvariable2 = "Adult Fare: $1.12"
+            self.wlvariable3 = "Senior Citizen Fare: $0.73"
         elif 6.2 >= distance > 5.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.22")
             print("Senior Citizen Fare: $0.80")
+            self.wlvariable1 = "Student Fare: $0.47"
+            self.wlvariable2 = "Adult Fare: $1.22"
+            self.wlvariable3 = "Senior Citizen Fare: $0.80"
 
     # finding which mrt station is closest to the start/end point
     def lrt_nearnode(self, srctomrt):
@@ -275,16 +295,18 @@ class AstarWalkMrtAlgo:
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
                     waitTime = 3
+                    self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
                     waitTime = 7
+                    self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
                 totatTimeLRT = numStation + (
                             (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                self.wlvariable4 = ("Time taken: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance travelled: " +
                       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
 
                 # plotting on folium map
@@ -322,16 +344,18 @@ class AstarWalkMrtAlgo:
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
                     waitTime = 3
+                    self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
                     waitTime = 7
+                    self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
                 totatTimeLRT = numStation + (
                         (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                self.wlvariable4 = ("Time taken : " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance travelled: " +
                       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
 
                 # plotting map to folium
@@ -343,4 +367,7 @@ class AstarWalkMrtAlgo:
                 # m.save('templates/astaralgo_walklrt.html')
                 m.save('templates/default.html')
 
-        print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
+        self.wlvariable5 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
+
+    def printout2(self):
+        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4, self.wlvariable5]

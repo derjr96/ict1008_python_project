@@ -11,7 +11,9 @@ from osmnx.utils import make_str, log
 from osmnx.geo_utils import get_largest_component
 from osmnx.downloader import overpass_request
 from osmnx.errors import *
-
+import overpy
+import codes.findShortestBusRoute as findShortestBusRoute
+import codes.PlotShortestBusRouteHelperBus as plotShortestBusRoute
 
 def get_node(element):
     """
@@ -305,6 +307,9 @@ mrt_query_str = '[out:json][timeout:180];(relation["network"="Singapore Rail"]["
 mrt_response_json = overpass_request(data={'data': mrt_query_str}, timeout=180)
 G_lrt = create_graph(mrt_response_json)
 G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
+G_bus = ox.graph_from_point(punggol, distance=distance, network_type='drive_service')
+
+api = overpy.Overpass()
 
 # storing all nodes into a list
 walkNodeList = list(G_walk.nodes.values())
@@ -349,7 +354,7 @@ if (lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or (
     # plotting map to folium
     m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
                              popup_attribute="There is no LRT to bring you to your destination, please walk.")
-    m.save('templates/astaralgo_walklrt.html')
+    m.save('templates/astaralgo_walklrtbus.html')
 else:
     reachLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
     leaveLRT = ox.get_nearest_node(G_walk, mrtn_latlon(lrtend), method='euclidean', return_dist=True)
@@ -386,7 +391,39 @@ else:
             lrtfirst = lrt_astar(lrt_nearnode(lrtstart)[1], 6587709457, "no")
             lrtsecond = lrt_astar(6587709456, lrt_nearnode(lrtend)[1], "yes")
 
-        if end lrt station bus stop node is same as ep bus stop (run code below):
+        radius = 100
+        endBusStopNode = None
+        endLRTBusStopNode = None
+
+        while (endBusStopNode == None):
+            endBusStopNode = api.query(
+                "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
+                    1]) + ")[highway=bus_stop];out;")
+
+            if len(endBusStopNode.nodes) > 0:
+                endBusStopNode = endBusStopNode.nodes[0]
+                endBusStopLatLon = (endBusStopNode.lat, endBusStopNode.lon)
+                endBusStopCode = endBusStopNode.tags['asset_ref']
+            else:
+                endBusStopNode = None
+                radius += 50
+
+        endLRTLatLon = mrtn_latlon(lcoateEndLrt[0])
+
+        while (endLRTBusStopNode == None):
+            endLRTBusStopNode = api.query(
+                "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
+                    1]) + ")[highway=bus_stop];out;")
+
+            if len(endLRTBusStopNode.nodes) > 0:
+                endLRTBusStopNode = endLRTBusStopNode.nodes[0]
+                endLRTBusStopLatLon = (endLRTBusStopNode.lat, endLRTBusStopNode.lon)
+                endLRTBusStopCode = endLRTBusStopNode.tags['asset_ref']
+            else:
+                endLRTBusStopNode = None
+                radius += 50
+
+        if endBusStopNode.id == endLRTBusStopNode.id:
             # algo testing walk and lrt
             walkToStation = walk_astar(strtpt[0], reachLRT[0])
             walkFromStation = walk_astar(leaveLRT[0], endpt[0])
@@ -423,17 +460,20 @@ else:
             folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
             folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
             folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
-            m.save('templates/astaralgo_walklrt.html')
+            m.save('templates/astaralgo_walklrtbus.html')
         else:
             # algo testing walk and lrt
             walkToStation = walk_astar(strtpt[0], reachLRT[0])
-            bus = ALGO HERE(LRT BUS STOP, END POINT BUS STOP)
-            walkFromBusStop = walk_astar((END POINT BUS STOP), endpt[0])
+
+            paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
+            bus = plotShortestBusRoute.findPath(paths)
+
+            walkFromBusStop = walk_astar(endLRTBusStopNode.id, endpt[0])
 
             # converting all osmnx nodes to coordinates
             walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
             walkFromBusStop[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
-            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_BUS?, bus))
+            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
             lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
             lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
 
@@ -467,12 +507,46 @@ else:
                             tooltip="Transit LRT here!").add_to(m)
             folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
             folium.PolyLine(([lrtsecond[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
-            m.save('templates/astaralgo_walklrt.html')
+            m.save('templates/astaralgo_walklrtbus.html')
 
     else:  # if both stations are found on the same lrt loop
         # algo testing walk and lrt
         lrtfinal = lrt_astar(lrt_nearnode(lrtstart)[1], lrt_nearnode(lrtend)[1], "no")
-        if end lrt station bus stop node is same as ep bus stop (run code below):
+
+        radius = 100
+        endBusStopNode = None
+        endLRTBusStopNode = None
+
+        while (endBusStopNode == None):
+            endBusStopNode = api.query(
+                "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
+                    1]) + ")[highway=bus_stop];out;")
+
+            if len(endBusStopNode.nodes) > 0:
+                endBusStopNode = endBusStopNode.nodes[0]
+                endBusStopLatLon = (endBusStopNode.lat, endBusStopNode.lon)
+                endBusStopCode = endBusStopNode.tags['asset_ref']
+            else:
+                endBusStopNode = None
+                radius += 50
+
+        endLRTLatLon = mrtn_latlon(lcoateEndLrt[0])
+
+        radius = 100
+        while (endLRTBusStopNode == None):
+            endLRTBusStopNode = api.query(
+                "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
+                    1]) + ")[highway=bus_stop];out;")
+
+            if len(endLRTBusStopNode.nodes) > 0:
+                endLRTBusStopNode = endLRTBusStopNode.nodes[0]
+                endLRTBusStopLatLon = (endLRTBusStopNode.lat, endLRTBusStopNode.lon)
+                endLRTBusStopCode = endLRTBusStopNode.tags['asset_ref']
+            else:
+                endLRTBusStopNode = None
+                radius += 50
+
+        if endBusStopNode.id == endLRTBusStopNode.id:
             walkToStation = walk_astar(strtpt[0], reachLRT[0])
             walkFromStation = walk_astar(leaveLRT[0], endpt[0])
 
@@ -506,16 +580,19 @@ else:
             folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
             folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
             folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
-            m.save('templates/astaralgo_walklrt.html')
+            m.save('templates/astaralgo_walklrtbus.html')
         else:
             walkToStation = walk_astar(strtpt[0], reachLRT[0])
-            bus = ALGO HERE(LRT BUS STOP, END POINT BUS STOP)
-            walkFromBusStop = walk_astar((END POINT BUS STOP), endpt[0])
+
+            paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
+            bus = plotShortestBusRoute.findPath(paths)
+
+            walkFromBusStop = walk_astar(endBusStopNode.id, endpt[0])
 
             # converting all osmnx nodes to coordinates
             walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-            walkFromStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_BUS?, bus))
+            walkFromBusStop[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
+            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
             lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
 
             # calculating estimated time, cost, distance to reach the destination
@@ -543,6 +620,6 @@ else:
             folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
             folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
             folium.PolyLine(([lrtfinal[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
-            m.save('templates/astaralgo_walklrt.html')
+            m.save('templates/astaralgo_walklrtbus.html')
 
 print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))

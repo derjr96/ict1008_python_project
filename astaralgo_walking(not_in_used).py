@@ -80,6 +80,8 @@ def astar(start_point, end_point):
 
 
 # main code
+# testing algorithmn speed
+start_time = time.time()
 punggol = (1.403948, 103.909048)
 distance = 1500
 G = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
@@ -103,8 +105,6 @@ for i in range(0, len(nodeList)):
     if (nodeList[i].get("x") == end[0]) and (nodeList[i].get("y") == end[1]):
         endosmid = nodeList[i].get("osmid")
 
-# testing algorithmn speed
-start_time = time.time()
 
 final = astar(startosmid, endosmid)
 print("--- %s seconds ---" % (time.time() - start_time))
