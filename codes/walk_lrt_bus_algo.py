@@ -27,13 +27,15 @@ class WalkBusLrt:
             self.walkEdgeList = walkEdgeList
             self.mrtEdgeList = mrtEdgeList
 
-            # for walk and mrt output
-            self.wlvariable = 0
-            self.wlvariable1 = 0
-            self.wlvariable2 = 0
-            self.wlvariable3 = 0
-            self.wlvariable4 = 0
-            self.wlvariable5 = 0
+            # for walk bus mrt output
+            self.wlbvariable = 0
+            self.wlbvariable1 = 0
+            self.wlbvariable2 = 0
+            self.wlbvariable3 = 0
+            self.wlbvariable4 = 0
+            self.wlbvariable5 = 0
+            self.wlbvariable6 = 0
+            self.wlbvariable7 = 0
 
             self.src = s
             self.des = d
@@ -162,17 +164,30 @@ class WalkBusLrt:
             print("Student Fare: $0.42")
             print("Adult Fare: $0.92")
             print("Senior Citizen Fare: $0.59")
+            self.wlbvariable1 = "Student Fare: $0.42"
+            self.wlbvariable2 = "Adult Fare: $0.92"
+            self.wlbvariable3 = "Senior Citizen Fare: $0.59"
         elif 4.2 >= distance > 3.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.02")
             print("Senior Citizen Fare: $0.66")
+            self.wlbvariable1 = "Student Fare: $0.47"
+            self.wlbvariable2 = "Adult Fare: $1.02"
+            self.wlbvariable3 = "Senior Citizen Fare: $0.66"
         elif 5.2 >= distance > 4.2:
             print("Student Fare: $0.52")
             print("Adult Fare: $1.12")
             print("Senior Citizen Fare: $0.73")
+            self.wlbvariable1 = "Student Fare: $0.52"
+            self.wlbvariable2 = "Adult Fare: $1.12"
+            self.wlbvariable3 = "Senior Citizen Fare: $0.73"
         elif 6.2 >= distance > 5.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.22")
+            print("Senior Citizen Fare: $0.80")
+            self.wlbvariable1 = "Student Fare: $0.47"
+            self.wlbvariable2 = "Adult Fare: $1.22"
+            self.wlbvariable3 = "Senior Citizen Fare: $0.80"
             print("Senior Citizen Fare: $0.80")
 
 
@@ -466,17 +481,21 @@ class WalkBusLrt:
                     if "10" > timenow > "6":
                         print("--- PEAK HOUR ---")
                         waitTime = 3
+                        self.wlbvariable = "--- PEAK HOUR ---"
                     else:
                         print("--- NON-PEAK HOUR ---")
                         waitTime = 7
+                        self.wlbvariable = "--- NON-PEAK HOUR ---"
                     self.lrtFareCal(totalDistLRT)    # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
-                    print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                          str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
-
+                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable6 = ("Transfer: 1, Punggol Station")
                     # plotting on folium map
                     folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
                                     tooltip="Change LRT at Punggol Station.").add_to(m)
@@ -492,6 +511,7 @@ class WalkBusLrt:
                     walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
 
                     paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
+                    # bus = plotShortestBusRoute.findPath(G_bus, paths)
                     bus = plotShortestBusRoute.findPath(paths)
 
                     walkFromBusStop = self.walk_astar(endLRTBusStopNode.id, endpt[0])
@@ -512,18 +532,22 @@ class WalkBusLrt:
                     if "10" > timenow > "6":
                         print("--- PEAK HOUR ---")
                         waitTime = 3
+                        self.wlbvariable = "--- PEAK HOUR ---"
                     else:
                         print("--- NON-PEAK HOUR ---")
                         waitTime = 7
+                        self.wlbvariable = "--- NON-PEAK HOUR ---"
                     self.lrtFareCal(totalDistLRT)  # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + (
                                 (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                    print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                          str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
-
+                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable6 = ("Transfer: 1, Punggol Station")
                     # plotting on folium map
                     folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
                                     tooltip="Change LRT at Punggol Station.").add_to(m)
@@ -594,17 +618,22 @@ class WalkBusLrt:
                     if "10" > timenow > "6":
                         print("--- PEAK HOUR ---")
                         waitTime = 3
+                        self.wlbvariable = "--- PEAK HOUR ---"
                     else:
                         print("--- NON-PEAK HOUR ---")
                         waitTime = 7
+                        self.wlbvariable = "--- NON-PEAK HOUR ---"
                     self.lrtFareCal(totalDistLRT)  # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + (
                                 (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                    print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                          str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable6 = ("Transfer: None.")
 
                     # plotting map to folium
                     folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
@@ -616,6 +645,7 @@ class WalkBusLrt:
                     walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
 
                     paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
+                    # bus = plotShortestBusRoute.findPath(G_bus, paths)
                     bus = plotShortestBusRoute.findPath(paths)
 
                     walkFromBusStop = self.walk_astar(endBusStopNode.id, endpt[0])
@@ -635,17 +665,22 @@ class WalkBusLrt:
                     if "10" > timenow > "6":
                         print("--- PEAK HOUR ---")
                         waitTime = 3
+                        self.wlbvariable = "--- PEAK HOUR ---"
                     else:
                         print("--- NON-PEAK HOUR ---")
                         waitTime = 7
+                        self.wlbvariable = "--- NON-PEAK HOUR ---"
                     self.lrtFareCal(totalDistLRT)  # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + (
                             (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                    print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                          str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable6 = ("Transfer: None.")
 
                     # plotting map to folium
                     folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
@@ -656,4 +691,8 @@ class WalkBusLrt:
                     #m.save('templates/astaralgo_walklrtbus.html')
                     m.save('templates/default.html')
 
-        print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
+        # print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
+        self.wlbvariable7 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
+
+    def printout3(self):
+        return [self.wlbvariable, self.wlbvariable1, self.wlbvariable2, self.wlbvariable3, self.wlbvariable4, self.wlbvariable5, self.wlbvariable6, self.wlbvariable7]

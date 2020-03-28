@@ -31,10 +31,15 @@ def home():
     walklrtvalue6 = 0
     walklrtvalue7 = 0
 
-    wbvariable = 0
-    wbvariable1 = 0
-    wbvariable2 = 0
-    wbvariable3 = 0
+    #walk bus mrt
+    allvalue = 0 
+    allvalue1 = 0 
+    allvalue2 = 0 
+    allvalue3 = 0 
+    allvalue4 = 0 
+    allvalue5 = 0 
+    allvalue6 = 0 
+    allvalue7 = 0 
 
     if request.method == "POST":
         address_input = str(request.form["address_input"])  # src
@@ -85,6 +90,15 @@ def home():
             # will implement it later.
             allthree = WalkBusLrt(address_input, address_input1, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList)
             allthree.generate()
+            allvalue = allthree.printout3()[0]
+            allvalue1 = allthree.printout3()[1] 
+            allvalue2 = allthree.printout3()[2] 
+            allvalue3 = allthree.printout3()[3] 
+            allvalue4 = allthree.printout3()[4] 
+            allvalue5 = allthree.printout3()[5] 
+            allvalue6 = allthree.printout3()[6] 
+            allvalue7 = allthree.printout3()[7]
+            return render_template("base.html", wlbvariable = allvalue, wlbvariable1 = allvalue1, wlbvariable2 = allvalue2, wlbvariable3 = allvalue3, wlbvariable4 = allvalue4, wlbvariable5 = allvalue5, wlbvariable6 = allvalue6, wlbvariable7 = allvalue7)
 
 
         return render_template("base.html")
