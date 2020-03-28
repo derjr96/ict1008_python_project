@@ -136,12 +136,7 @@ punggol = (1.403948, 103.909048)
 distance = 2000
 
 print("Creating Walk MultiDiGraph...")
-
 G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
-
-print("Creating Bus MultiDiGraph...")
-
-G_bus = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive_service')
 
 print("Storing Walk MultiDiGraph...")
 walkNodeList = list(G_walk.nodes.values())
@@ -157,7 +152,11 @@ print("Storing LRT MultiDiGraph...")
 mrtNodeList = list(G_lrt.nodes.values())
 mrtEdgeList = list(G_lrt.edges.items())
 
-print("LRT MultiDiGraph Created and Stored!\nAll MultiDiGraph Created and Stored.")
+print("LRT MultiDiGraph Created and Stored!\nCreating Bus MultiDiGraph...")
+
+G_bus = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive_service')
+
+print("Bus MultiDiGraph Created\nAll MultiDiGraph Created and Stored.")
 
 from codes import routes
 
