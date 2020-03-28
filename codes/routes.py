@@ -3,6 +3,7 @@ from codes import app, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNode
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
+from codes.walk_lrt_bus_algo import WalkBusLrt
 
 
 @app.after_request
@@ -77,6 +78,13 @@ def home():
             result = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
             return render_template("base.html", wbvariable = result[0], wbvariable1 = result[1], wbvariable2 = result[2], wbvariable3 = result[3])
             # redirect("/walkingbus")
+        elif str(request.form["dropdown"]) == "WalkBusMrt":
+            dropdown = str(request.form["dropdown"])  # dropdown value
+            print(address_input, "-->", address_input1)
+            print(dropdown)
+            # will implement it later.
+            allthree = WalkBusLrt(address_input, address_input1, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList)
+            allthree.generate()
 
 
         return render_template("base.html")
