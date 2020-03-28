@@ -23,6 +23,8 @@ class AstarWalkMrtAlgo:
         self.wlvariable3 = 0
         self.wlvariable4 = 0
         self.wlvariable5 = 0
+        self.wlvariable6 = 0
+        self.wlvariable7 = 0
 
         self.src = s
         self.des = d
@@ -306,9 +308,9 @@ class AstarWalkMrtAlgo:
                             (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                self.wlvariable4 = ("Time taken: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance travelled: " +
-                      str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
-
+                self.wlvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes\n")
+                self.wlvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                self.wlvariable6 = ("Transfer: 1, Punggol Station")
                 # plotting on folium map
                 folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
                                 tooltip="Change LRT at Punggol Station.").add_to(m)
@@ -355,8 +357,9 @@ class AstarWalkMrtAlgo:
                         (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                self.wlvariable4 = ("Time taken : " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance travelled: " +
-                      str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                self.wlvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                self.wlvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                self.wlvariable6 = ("Transfer: None.")
 
                 # plotting map to folium
                 folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
@@ -367,7 +370,7 @@ class AstarWalkMrtAlgo:
                 # m.save('templates/astaralgo_walklrt.html')
                 m.save('templates/default.html')
 
-        self.wlvariable5 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
+        self.wlvariable7 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
 
     def printout2(self):
-        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4, self.wlvariable5]
+        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4, self.wlvariable5, self.wlvariable6, self.wlvariable7]

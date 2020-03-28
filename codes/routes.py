@@ -27,6 +27,14 @@ def home():
     walklrtvalue3 = 0
     walklrtvalue4 = 0
     walklrtvalue5 = 0
+    walklrtvalue6 = 0
+    walklrtvalue7 = 0
+
+    wbvariable = 0
+    wbvariable1 = 0
+    wbvariable2 = 0
+    wbvariable3 = 0
+
     if request.method == "POST":
         address_input = str(request.form["address_input"])  # src
         address_input1 = str(request.form["address_input1"])  # dst
@@ -58,14 +66,16 @@ def home():
             walklrtvalue3 = asawl.printout2()[3]
             walklrtvalue4 = asawl.printout2()[4]
             walklrtvalue5 = asawl.printout2()[5]
-            return render_template("base.html", wlvariable = walklrtvalue, wlvariable1 = walklrtvalue1, wlvariable2 = walklrtvalue2, wlvariable3 = walklrtvalue3, wlvariable4= walklrtvalue4, wlvariable5 = walklrtvalue5)
+            walklrtvalue6 = asawl.printout2()[6]
+            walklrtvalue7 = asawl.printout2()[7]
+            return render_template("base.html", wlvariable = walklrtvalue, wlvariable1 = walklrtvalue1, wlvariable2 = walklrtvalue2, wlvariable3 = walklrtvalue3, wlvariable4= walklrtvalue4, wlvariable5 = walklrtvalue5, wlvariable6= walklrtvalue6, wlvariable7 = walklrtvalue7)
             # redirect("/walkinglrt")
         elif str(request.form["dropdown"]) == "WalkandBus":
             dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
             result = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
-            return render_template("base.html", wlvariable = result[0], wlvariable1 = result[1])
+            return render_template("base.html", wbvariable = result[0], wbvariable1 = result[1], wbvariable2 = result[2], wbvariable3 = result[3])
             # redirect("/walkingbus")
 
 
