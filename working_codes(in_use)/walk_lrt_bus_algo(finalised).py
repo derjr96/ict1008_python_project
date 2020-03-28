@@ -331,7 +331,7 @@ for k in mrtNodeList:  # check for nodes which are stations
 # testing algorithmn speed
 start_time = time.time()
 # user input (GUI TEAM, user input in text area will be stored here)
-src = "Nibong, Punggol"     # 406B, Northshore Drive, Punggol
+src = "Block 130, Edgedale Plains, Punggol"     # 406B, Northshore Drive, Punggol - Nibong, Punggol
 # punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
 des = "406B, Northshore Drive, Punggol"  # random hdb 60 Punggol East, Singapore 828825
 startpoint = ox.geocode(src)
@@ -395,7 +395,7 @@ else:
         endBusStopNode = None
         endLRTBusStopNode = None
 
-        while (endBusStopNode == None):
+        while endBusStopNode is None:
             endBusStopNode = api.query(
                 "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
                     1]) + ")[highway=bus_stop];out;")
@@ -410,7 +410,7 @@ else:
 
         endLRTLatLon = mrtn_latlon(lcoateEndLrt[0])
 
-        while (endLRTBusStopNode == None):
+        while endLRTBusStopNode is None:
             endLRTBusStopNode = api.query(
                 "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
                     1]) + ")[highway=bus_stop];out;")
@@ -455,11 +455,14 @@ else:
                   str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
 
             # plotting on folium map
-            folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1, tooltip="Change LRT at Punggol Station.").add_to(m)
-            folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1, tooltip="Continue here to your destination.").add_to(m)
-            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1, tooltip="Transit LRT here!").add_to(m)
-            folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-            folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
+                            tooltip="Change LRT at Punggol Station.").add_to(m)
+            folium.PolyLine(lrtsecond[0], color="red", weight=2, opacity=1,
+                            tooltip="Continue here to your destination.").add_to(m)
+            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=2, opacity=1,
+                            tooltip="Transit LRT here!").add_to(m)
+            folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
             m.save('templates/astaralgo_walklrtbus.html')
         else:
             # algo testing walk and lrt
@@ -473,7 +476,7 @@ else:
             # converting all osmnx nodes to coordinates
             walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
             walkFromBusStop[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
-            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
+            bus[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
             lrtfirst[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
             lrtsecond[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
 
@@ -499,14 +502,18 @@ else:
                   str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
 
             # plotting on folium map
-            folium.PolyLine(lrtfirst[0], color="red", weight=4, opacity=1,
+            folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
                             tooltip="Change LRT at Punggol Station.").add_to(m)
-            folium.PolyLine(lrtsecond[0], color="red", weight=4, opacity=1,
+            folium.PolyLine(lrtsecond[0], color="red", weight=2, opacity=1,
                             tooltip="Continue here to your destination.").add_to(m)
-            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=4, opacity=1,
+            folium.PolyLine(bus[0], color="green", weight=2, opacity=1,
+                            tooltip="Change from Lrt to Bus.").add_to(m)
+            folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=2, opacity=1,
                             tooltip="Transit LRT here!").add_to(m)
-            folium.PolyLine((walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-            folium.PolyLine(([lrtsecond[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2, opacity=1,
+                            tooltip="Walk to Bus stop").add_to(m)
+            folium.PolyLine(([lrtsecond[0][-1]] + [bus[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
             m.save('templates/astaralgo_walklrtbus.html')
 
     else:  # if both stations are found on the same lrt loop
@@ -517,7 +524,7 @@ else:
         endBusStopNode = None
         endLRTBusStopNode = None
 
-        while (endBusStopNode == None):
+        while endBusStopNode is None:
             endBusStopNode = api.query(
                 "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
                     1]) + ")[highway=bus_stop];out;")
@@ -533,7 +540,7 @@ else:
         endLRTLatLon = mrtn_latlon(lcoateEndLrt[0])
 
         radius = 100
-        while (endLRTBusStopNode == None):
+        while endLRTBusStopNode is None:
             endLRTBusStopNode = api.query(
                 "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
                     1]) + ")[highway=bus_stop];out;")
@@ -577,9 +584,9 @@ else:
                   str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
 
             # plotting map to folium
-            folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-            folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-            folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
             m.save('templates/astaralgo_walklrtbus.html')
         else:
             walkToStation = walk_astar(strtpt[0], reachLRT[0])
@@ -592,7 +599,7 @@ else:
             # converting all osmnx nodes to coordinates
             walkToStation[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
             walkFromBusStop[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
-            bus = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
+            bus[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
             lrtfinal[0] = convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
 
             # calculating estimated time, cost, distance to reach the destination
@@ -617,9 +624,11 @@ else:
                   str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
 
             # plotting map to folium
-            folium.PolyLine(lrtfinal[0], color="red", weight=4, opacity=1).add_to(m)
-            folium.PolyLine((walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=4, opacity=1).add_to(m)
-            folium.PolyLine(([lrtfinal[0][-1]] + walkFromBusStop[0]), color="blue", weight=4, opacity=1).add_to(m)
+            folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(bus[0], color="green", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([lrtfinal[0][-1]] + [bus[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+            folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
             m.save('templates/astaralgo_walklrtbus.html')
 
 print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))

@@ -3,7 +3,6 @@ from codes import app, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNode
 from codes.walk_astaralgo import AstarWalkAlgo
 from codes.walk_mrt_algo import AstarWalkMrtAlgo
 import codes.PlotShortestWalkBusRoute as DjWalkBus
-from flask_caching import Cache
 
 
 @app.after_request
