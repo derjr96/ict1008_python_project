@@ -164,11 +164,13 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         folium.Marker(location=endLocation, icon=folium.Icon(color='green', icon='stop', prefix='fa')).add_to(m)
 
         # Save as html file
-        m.save('templates/dijkstra_walk_bus.html')
+        m.save('templates/default.html')
 
         endTime = time.time()
+        totalTime = [("Total calculation time: " + str(round(endTime - startTime, 2))) + " seconds"]
         print("Plotting of Map takes: ", round(endTime - plotTime, 2))
         print("Time taken: ", round(endTime - startTime, 2))
+        return totalTime
 
 # Test Cases (NOT ALL BUS STOPS ARE ON OSM OR ARE ACCURATE. MANUAL ADDITION OF MAP DATA ONLINE:
 # 1. Punggol Green Primary - Punggol Bus Interchange ('1.4021', '103.89872') - ('1.40394', '103.90263') Checked

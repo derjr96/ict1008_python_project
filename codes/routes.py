@@ -65,10 +65,11 @@ def home():
             dropdown = str(request.form["dropdown"])  # dropdown value
             print(address_input, "-->", address_input1)
             print(dropdown)
-            DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
+            algoTime = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
+            return render_template("base.html", wlvariable = algoTime[0])
             # redirect("/walkingbus")
 
-        
+
         return render_template("base.html")
     elif request.method == "GET":
         return render_template("home.html")
