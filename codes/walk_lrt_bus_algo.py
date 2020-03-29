@@ -1,16 +1,9 @@
-from flask import Flask, render_template
 import heapq
 import folium
 import math
-import networkx as nx
 import time
 from datetime import datetime
 import osmnx as ox
-from osmnx import settings
-from osmnx.utils import make_str, log
-from osmnx.geo_utils import get_largest_component
-from osmnx.downloader import overpass_request
-from osmnx.errors import *
 import overpy
 import codes.findShortestBusRoute as findShortestBusRoute
 import codes.PlotShortestBusRouteHelperBus as plotShortestBusRoute
@@ -18,145 +11,27 @@ import codes.PlotShortestBusRouteHelperBus as plotShortestBusRoute
 
 class WalkBusLrt:
     def __init__(self, s, d, G_bus, G_walk, G_lrt, walkNodeList, walkEdgeList, mrtNodeList, mrtEdgeList):
-            self.G_lrt = G_lrt
-            self.G_walk = G_walk
-            self.G_bus = G_bus
+        self.G_lrt = G_lrt
+        self.G_walk = G_walk
+        self.G_bus = G_bus
 
-            self.walkNodeList = walkNodeList
-            self.mrtNodeList = mrtNodeList
-            self.walkEdgeList = walkEdgeList
-            self.mrtEdgeList = mrtEdgeList
+        self.walkNodeList = walkNodeList
+        self.mrtNodeList = mrtNodeList
+        self.walkEdgeList = walkEdgeList
+        self.mrtEdgeList = mrtEdgeList
 
-            # for walk bus mrt output
-            self.wlbvariable = 0
-            self.wlbvariable1 = 0
-            self.wlbvariable2 = 0
-            self.wlbvariable3 = 0
-            self.wlbvariable4 = 0
-            self.wlbvariable5 = 0
-            self.wlbvariable6 = 0
-            self.wlbvariable7 = 0
+        # for walk bus mrt output
+        self.wlbvariable = 0
+        self.wlbvariable1 = 0
+        self.wlbvariable2 = 0
+        self.wlbvariable3 = 0
+        self.wlbvariable4 = 0
+        self.wlbvariable5 = 0
+        self.wlbvariable6 = 0
+        self.wlbvariable7 = 0
 
-            self.src = s
-            self.des = d
-
-    def get_node(self, element):
-        """
-        Convert an OSM node element into the format for a networkx node.
-
-        Parameters
-        ----------
-        element : dict
-            an OSM node element
-
-        Returns
-        -------
-        dict
-        """
-        useful_tags_node = ['ref', 'railway']
-        node = {}
-        node['y'] = element['lat']
-        node['x'] = element['lon']
-        node['osmid'] = element['id']
-
-        if 'tags' in element:
-            for useful_tag in useful_tags_node:
-                if useful_tag in element['tags']:
-                    node[useful_tag] = element['tags'][useful_tag]
-        return node
-
-
-    def parse_osm_nodes_paths(self, osm_data):
-        """
-        Construct dicts of nodes and paths with key=osmid and value=dict of
-        attributes.
-        Parameters
-        ----------
-        osm_data : dict
-            JSON response from from the Overpass API
-        Returns
-        -------
-        nodes, paths : tuple
-        """
-
-        nodes = {}
-        paths = {}
-        for element in osm_data['elements']:
-            if element['type'] == 'node':
-                key = element['id']
-                nodes[key] = self.get_node(element)
-            elif element['type'] == 'way':  # osm calls network paths 'ways'
-                key = element['id']
-                paths[key] = ox.get_path(element)
-
-        return nodes, paths
-
-
-    def create_graph(self, mrt_response_json, name='unnamed', retain_all=True, bidirectional=False):
-        """
-        Create a networkx graph from Overpass API HTTP response objects.
-
-        Parameters
-        ----------
-        response_jsons : list
-            list of dicts of JSON responses from from the Overpass API
-        name : string
-            the name of the graph
-        retain_all : bool
-            if True, return the entire graph even if it is not connected
-        bidirectional : bool
-            if True, create bidirectional edges for one-way streets
-
-        Returns
-        -------
-        networkx multidigraph
-        """
-
-        log('Creating networkx graph from downloaded OSM data...')
-        start_time = time.time()
-
-        # make sure we got data back from the server requests
-        elements = []
-        # for response_json in response_jsons:
-        elements.extend(mrt_response_json['elements'])
-        if len(elements) < 1:
-            raise EmptyOverpassResponse('There are no data elements in the response JSON objects')
-
-        # create the graph as a MultiDiGraph and set the original CRS to default_crs
-        G = nx.MultiDiGraph(name=name, crs=settings.default_crs)
-
-        # extract nodes and paths from the downloaded osm data
-        nodes = {}
-        paths = {}
-        # for osm_data in response_jsons:
-        nodes_temp, paths_temp = self.parse_osm_nodes_paths(mrt_response_json)
-        for key, value in nodes_temp.items():
-            nodes[key] = value
-        for key, value in paths_temp.items():
-            paths[key] = value
-
-        # add each osm node to the graph
-        for node, data in nodes.items():
-            G.add_node(node, **data)
-
-        # add each osm way (aka, path) to the graph
-        G = ox.add_paths(G, paths, bidirectional=bidirectional)
-
-        # retain only the largest connected component, if caller did not
-        # set retain_all=True
-        if not retain_all:
-            G = get_largest_component(G)
-
-        log('Created graph with {:,} nodes and {:,} edges in {:,.2f} seconds'.format(len(list(G.nodes())),
-                                                                                     len(list(G.edges())),
-                                                                                     time.time() - start_time))
-
-        # add length (great circle distance between nodes) attribute to each edge to
-        # use as weight
-        if len(G.edges) > 0:
-            G = ox.add_edge_lengths(G)
-
-        return G
+        self.src = s
+        self.des = d
 
     # LRT fare based on distance travelled
     def lrtFareCal(self, distance):
@@ -190,7 +65,6 @@ class WalkBusLrt:
             self.wlbvariable3 = "Senior Citizen Fare: $0.80"
             print("Senior Citizen Fare: $0.80")
 
-
     # finding which mrt station is closest to the start/end point
     def lrt_nearnode(self, srctomrt):
         nearnode = []
@@ -200,20 +74,17 @@ class WalkBusLrt:
                 heapq.heappush(nearnode, (h, k.get("osmid")))
         return heapq.heappop(nearnode)
 
-
     # retrieving lat/lon coordinates for LRT via OSMID
     def mrtn_latlon(self, osmid):
         for k in self.mrtNodeList:
             if k.get("osmid") == osmid:
                 return k.get("y"), k.get("x")
 
-
     # retrieving lat/lon coordinates for walk via OSMID
     def walk_latlon(self, osmid):
         for k in self.walkNodeList:
             if k.get("osmid") == osmid:
                 return k.get("x"), k.get("y")
-
 
     # calculating heuristic between two lat/lon points
     def heuristic(self, start, end):
@@ -229,7 +100,6 @@ class WalkBusLrt:
         dist = radius * c * 1000
 
         return dist
-
 
     # ASTAR ALGORITHM
     def lrt_astar(self, start_point, end_point, use):
@@ -285,7 +155,6 @@ class WalkBusLrt:
                             # adding previous path to close path dict to prevent an infinite loop of short path
                             closepath[i[0][1]] = temp[3]
 
-
     # ASTAR ALGORITHM
     def walk_astar(self, start_point, end_point):
         closepath = {}
@@ -326,7 +195,6 @@ class WalkBusLrt:
                             # adding previous path to close path dict to prevent an infinite loop of short path
                             closepath[i[0][1]] = temp[3]
 
-
     # conversion of route to coords
     def convertRoute(self, coords):
         output = []
@@ -340,24 +208,11 @@ class WalkBusLrt:
         punggol = (1.403948, 103.909048)
         distance = 2000
 
-        # data creation and storing
-        mrt_query_str = '[out:json][timeout:180];(relation["network"="Singapore Rail"]["route"="monorail"](1.4011,103.8977,1.4154,103.9231);>;);out;'
-        mrt_response_json = overpass_request(data={'data': mrt_query_str}, timeout=180)
-        G_lrt = self.create_graph(mrt_response_json)
-        G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
-        G_bus = ox.graph_from_point(punggol, distance=distance, network_type='drive_service')
-
         api = overpy.Overpass()
-
-        # storing all nodes into a list
-        walkNodeList = list(G_walk.nodes.values())
-        walkEdgeList = list(G_walk.edges.items())
-        mrtNodeList = list(G_lrt.nodes.values())
-        mrtEdgeList = list(G_lrt.edges.items())
 
         pe = []
         pw = []
-        for k in mrtNodeList:  # check for nodes which are stations
+        for k in self.mrtNodeList:  # check for nodes which are stations
             try:
                 if "PE" in k.get('ref'):
                     pe.append(k.get('osmid'))
@@ -369,15 +224,15 @@ class WalkBusLrt:
         # testing algorithmn speed
         start_time = time.time()
         # user input (GUI TEAM, user input in text area will be stored here)
-        #src = "Block 130, Edgedale Plains, Punggol"     # 406B, Northshore Drive, Punggol - Nibong, Punggol
+        # src = "Block 130, Edgedale Plains, Punggol"     # 406B, Northshore Drive, Punggol - Nibong, Punggol
         # punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
-        #des = "406B, Northshore Drive, Punggol"  # random hdb 60 Punggol East, Singapore 828825
+        # des = "406B, Northshore Drive, Punggol"  # random hdb 60 Punggol East, Singapore 828825
         startpoint = ox.geocode(self.src)
         endpoint = ox.geocode(self.des)
 
         # finding nearest nodes required
-        strtpt = ox.get_nearest_node(G_walk, startpoint, method='euclidean', return_dist=True)
-        endpt = ox.get_nearest_node(G_walk, endpoint, method='euclidean', return_dist=True)
+        strtpt = ox.get_nearest_node(self.G_walk, startpoint, method='euclidean', return_dist=True)
+        endpt = ox.get_nearest_node(self.G_walk, endpoint, method='euclidean', return_dist=True)
 
         # locateStrtLrt and lcoateEndLrt is only used to locate the location of both mrt
         locateStrtLrt = ox.get_nearest_node(self.G_lrt, startpoint, method='euclidean', return_dist=True)
@@ -386,15 +241,16 @@ class WalkBusLrt:
         lrtend = self.lrt_nearnode(lcoateEndLrt[0])[1]
 
         if (lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or (lrtstart == 6587709457 and
-                    lrtend == 6587709456)): # and (start point bus stop node is same as end point):
+                                                                                        lrtend == 6587709456)):  # and (start point bus stop node is same as end point):
             final = self.walk_astar(strtpt[0], endpt[0])
 
             # plotting map to folium
-            m = ox.plot_route_folium(G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
+            m = ox.plot_route_folium(self.G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
                                      popup_attribute="There is no LRT to bring you to your destination, please walk.")
             m.save('templates/default.html')
         else:
-            reachLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
+            reachLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtstart), method='euclidean',
+                                           return_dist=True)
             leaveLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtend), method='euclidean', return_dist=True)
 
             eastlrt = 0
@@ -436,7 +292,7 @@ class WalkBusLrt:
                 while endBusStopNode is None:
                     endBusStopNode = api.query(
                         "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
-                            1]) + ")[highway=bus_stop];out;")
+                                                                                              1]) + ")[highway=bus_stop];out;")
 
                     if len(endBusStopNode.nodes) > 0:
                         endBusStopNode = endBusStopNode.nodes[0]
@@ -451,7 +307,7 @@ class WalkBusLrt:
                 while endLRTBusStopNode is None:
                     endLRTBusStopNode = api.query(
                         "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
-                            1]) + ")[highway=bus_stop];out;")
+                                                                                                  1]) + ")[highway=bus_stop];out;")
 
                     if len(endLRTBusStopNode.nodes) > 0:
                         endLRTBusStopNode = endLRTBusStopNode.nodes[0]
@@ -467,14 +323,16 @@ class WalkBusLrt:
                     walkFromStation = self.walk_astar(leaveLRT[0], endpt[0])
 
                     # converting all osmnx nodes to coordinates
-                    walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                    walkFromStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-                    lrtfirst[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
-                    lrtsecond[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+                    walkToStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkToStation[0]))
+                    walkFromStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkFromStation[0]))
+                    lrtfirst[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtfirst[0]))
+                    lrtsecond[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtsecond[0]))
 
                     # calculating estimated time, cost, distance to reach the destination
                     statDist = 10300 / 14
-                    totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000    # convert to meters to km
+                    totalDistLRT = (lrtfirst[1] + lrtsecond[1]) / 1000  # convert to meters to km
                     now = datetime.now()
                     timenow = now.strftime("%H")
                     waitTime = 0
@@ -486,15 +344,17 @@ class WalkBusLrt:
                         print("--- NON-PEAK HOUR ---")
                         waitTime = 7
                         self.wlbvariable = "--- NON-PEAK HOUR ---"
-                    self.lrtFareCal(totalDistLRT)    # call fare function
+                    self.lrtFareCal(totalDistLRT)  # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
-                    totatTimeLRT = numStation + ((totalDistLRT * 1000) / (45000 / 60)) + waitTime # avg mrt speed 45km/hr - 750m per minute
-                    totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000       # convert to meters to km
-                    estwalk = (totalDistWalk * 1000) / (5000 / 60) # avg walking speed 1.4m/min - 5km/hr
+                    totatTimeLRT = numStation + ((totalDistLRT * 1000) / (
+                                45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+                    totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
+                    estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
                     # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
                     #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
                     self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
-                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable5 = (
+                                "\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
                     self.wlbvariable6 = ("Transfer: 1, Punggol Station")
                     # plotting on folium map
                     folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
@@ -503,8 +363,10 @@ class WalkBusLrt:
                                     tooltip="Continue here to your destination.").add_to(m)
                     folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=2, opacity=1,
                                     tooltip="Transit LRT here!").add_to(m)
-                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
+                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
+                    folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
                     m.save('templates/default.html')
                 else:
                     # algo testing walk and lrt
@@ -517,11 +379,13 @@ class WalkBusLrt:
                     walkFromBusStop = self.walk_astar(endLRTBusStopNode.id, endpt[0])
 
                     # converting all osmnx nodes to coordinates
-                    walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                    walkFromBusStop[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
-                    bus[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
-                    lrtfirst[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfirst[0]))
-                    lrtsecond[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtsecond[0]))
+                    walkToStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkToStation[0]))
+                    walkFromBusStop[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkFromBusStop[0]))
+                    bus[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_bus, bus[0]))
+                    lrtfirst[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtfirst[0]))
+                    lrtsecond[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtsecond[0]))
 
                     # calculating estimated time, cost, distance to reach the destination
                     statDist = 10300 / 14
@@ -540,13 +404,14 @@ class WalkBusLrt:
                     self.lrtFareCal(totalDistLRT)  # call fare function
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + (
-                                (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+                            (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
                     # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
                     #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
                     self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
-                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable5 = (
+                                "\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
                     self.wlbvariable6 = ("Transfer: 1, Punggol Station")
                     # plotting on folium map
                     folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
@@ -557,10 +422,12 @@ class WalkBusLrt:
                                     tooltip="Change from Lrt to Bus.").add_to(m)
                     folium.PolyLine(([lrtfirst[0][-1]] + [lrtsecond[0][0]]), color="blue", weight=2, opacity=1,
                                     tooltip="Transit LRT here!").add_to(m)
-                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2, opacity=1,
+                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfirst[0][0]]), color="blue", weight=2,
+                                    opacity=1,
                                     tooltip="Walk to Bus stop").add_to(m)
                     folium.PolyLine(([lrtsecond[0][-1]] + [bus[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
+                    folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
                     m.save('templates/default.html')
 
             else:  # if both stations are found on the same lrt loop
@@ -574,7 +441,7 @@ class WalkBusLrt:
                 while endBusStopNode is None:
                     endBusStopNode = api.query(
                         "node(around:" + str(radius) + "," + str(endpoint[0]) + "," + str(endpoint[
-                            1]) + ")[highway=bus_stop];out;")
+                                                                                              1]) + ")[highway=bus_stop];out;")
 
                     if len(endBusStopNode.nodes) > 0:
                         endBusStopNode = endBusStopNode.nodes[0]
@@ -590,7 +457,7 @@ class WalkBusLrt:
                 while endLRTBusStopNode is None:
                     endLRTBusStopNode = api.query(
                         "node(around:" + str(radius) + "," + str(endLRTLatLon[0]) + "," + str(endLRTLatLon[
-                            1]) + ")[highway=bus_stop];out;")
+                                                                                                  1]) + ")[highway=bus_stop];out;")
 
                     if len(endLRTBusStopNode.nodes) > 0:
                         endLRTBusStopNode = endLRTBusStopNode.nodes[0]
@@ -605,56 +472,11 @@ class WalkBusLrt:
                     walkFromStation = self.walk_astar(leaveLRT[0], endpt[0])
 
                     # converting all osmnx nodes to coordinates
-                    walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                    walkFromStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromStation[0]))
-                    lrtfinal[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
-
-                    # calculating estimated time, cost, distance to reach the destination
-                    statDist = 10300 / 14
-                    totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
-                    now = datetime.now()
-                    timenow = now.strftime("%H")
-                    waitTime = 0
-                    if "10" > timenow > "6":
-                        print("--- PEAK HOUR ---")
-                        waitTime = 3
-                        self.wlbvariable = "--- PEAK HOUR ---"
-                    else:
-                        print("--- NON-PEAK HOUR ---")
-                        waitTime = 7
-                        self.wlbvariable = "--- NON-PEAK HOUR ---"
-                    self.lrtFareCal(totalDistLRT)  # call fare function
-                    numStation = math.floor(totalDistLRT / statDist + 2)
-                    totatTimeLRT = numStation + (
-                                (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
-                    totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
-                    estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
-                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
-                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
-                    self.wlbvariable6 = ("Transfer: None.")
-
-                    # plotting map to folium
-                    folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
-                    #m.save('templates/astaralgo_walklrtbus.html')
-                    m.save('templates/default.html')
-                else:
-                    walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
-
-                    paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
-                    # bus = plotShortestBusRoute.findPath(G_bus, paths)
-                    bus = plotShortestBusRoute.findPath(paths)
-
-                    walkFromBusStop = self.walk_astar(endBusStopNode.id, endpt[0])
-
-                    # converting all osmnx nodes to coordinates
-                    walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkToStation[0]))
-                    walkFromBusStop[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_walk, walkFromBusStop[0]))
-                    bus[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_bus, bus[0]))
-                    lrtfinal[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(G_lrt, lrtfinal[0]))
+                    walkToStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkToStation[0]))
+                    walkFromStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkFromStation[0]))
+                    lrtfinal[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtfinal[0]))
 
                     # calculating estimated time, cost, distance to reach the destination
                     statDist = 10300 / 14
@@ -674,25 +496,80 @@ class WalkBusLrt:
                     numStation = math.floor(totalDistLRT / statDist + 2)
                     totatTimeLRT = numStation + (
                             (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
+                    totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
+                    estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+                    # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
+                    #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                    self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                    self.wlbvariable5 = (
+                                "\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable6 = ("Transfer: None.")
+
+                    # plotting map to folium
+                    folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
+                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
+                    folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
+                    # m.save('templates/astaralgo_walklrtbus.html')
+                    m.save('templates/default.html')
+                else:
+                    walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
+
+                    paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
+                    # bus = plotShortestBusRoute.findPath(G_bus, paths)
+                    bus = plotShortestBusRoute.findPath(paths)
+
+                    walkFromBusStop = self.walk_astar(endBusStopNode.id, endpt[0])
+
+                    # converting all osmnx nodes to coordinates
+                    walkToStation[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkToStation[0]))
+                    walkFromBusStop[0] = self.convertRoute(
+                        ox.plot.node_list_to_coordinate_lines(self.G_walk, walkFromBusStop[0]))
+                    bus[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_bus, bus[0]))
+                    lrtfinal[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_lrt, lrtfinal[0]))
+
+                    # calculating estimated time, cost, distance to reach the destination
+                    statDist = 10300 / 14
+                    totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
+                    now = datetime.now()
+                    timenow = now.strftime("%H")
+                    if "10" > timenow > "6":
+                        print("--- PEAK HOUR ---")
+                        waitTime = 3
+                        self.wlbvariable = "--- PEAK HOUR ---"
+                    else:
+                        print("--- NON-PEAK HOUR ---")
+                        waitTime = 7
+                        self.wlbvariable = "--- NON-PEAK HOUR ---"
+                    self.lrtFareCal(totalDistLRT)  # call fare function
+                    numStation = math.floor(totalDistLRT / statDist + 2)
+                    totatTimeLRT = numStation + (
+                            (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                     totalDistWalk = (walkToStation[1] + walkFromBusStop[1]) / 1000  # convert to meters to km
                     estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
                     # print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
                     #       str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
                     self.wlbvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
-                    self.wlbvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                    self.wlbvariable5 = (
+                                "\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
                     self.wlbvariable6 = ("Transfer: None.")
 
                     # plotting map to folium
                     folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
                     folium.PolyLine(bus[0], color="green", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
+                    folium.PolyLine(([startpoint] + walkToStation[0] + [lrtfinal[0][0]]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
                     folium.PolyLine(([lrtfinal[0][-1]] + [bus[0][0]]), color="blue", weight=2, opacity=1).add_to(m)
-                    folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
-                    #m.save('templates/astaralgo_walklrtbus.html')
+                    folium.PolyLine(([bus[0][-1]] + walkFromBusStop[0] + [endpoint]), color="blue", weight=2,
+                                    opacity=1).add_to(m)
+                    # m.save('templates/astaralgo_walklrtbus.html')
                     m.save('templates/default.html')
 
         # print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
         self.wlbvariable7 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
 
     def printout3(self):
-        return [self.wlbvariable, self.wlbvariable1, self.wlbvariable2, self.wlbvariable3, self.wlbvariable4, self.wlbvariable5, self.wlbvariable6, self.wlbvariable7]
+        return [self.wlbvariable, self.wlbvariable1, self.wlbvariable2, self.wlbvariable3, self.wlbvariable4,
+                self.wlbvariable5, self.wlbvariable6, self.wlbvariable7]

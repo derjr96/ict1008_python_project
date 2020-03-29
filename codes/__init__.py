@@ -2,11 +2,14 @@ from flask import Flask
 import networkx as nx
 import time
 import osmnx as ox
+import pandas
 from osmnx import settings
 from osmnx.utils import log
 from osmnx.geo_utils import get_largest_component
 from osmnx.downloader import overpass_request
 from osmnx.errors import *
+import html
+from geopy import Nominatim
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 
@@ -157,6 +160,34 @@ print("LRT MultiDiGraph Created and Stored!\nCreating Bus MultiDiGraph...")
 G_bus = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='drive_service')
 
 print("Bus MultiDiGraph Created\nAll MultiDiGraph Created and Stored.")
+
+print("Creating autofill list...")
+
+rgCSV = pandas.read_csv("data/rg_test_walk_node.csv")
+addrValue = rgCSV["address"].tolist()
+addr = []
+
+locator = Nominatim(user_agent="myGeocoder", timeout=20)
+
+for x in addrValue:
+    x = html.escape(x)
+    if x in addr:
+        continue
+    else:
+        addr.append(x)
+
+for item in mrtNodeList:
+    try:
+        if "PE" in item.get('ref') or "PW" in item.get('ref'):
+            coordinates = item.get('y'), item.get('x')
+            location = locator.reverse(coordinates)
+            addr.append(location[0])
+    except:  # to catch and skip noneType iterations
+        continue
+addr.append('Punggol')
+addr = addr[::-1]
+
+print("Autofill list Created!")
 
 from codes import routes
 

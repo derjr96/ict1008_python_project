@@ -139,10 +139,6 @@ mrt_query_str = '[out:json][timeout:180];(relation["network"="Singapore Rail"]["
 mrt_response_json = overpass_request(data={'data': mrt_query_str}, timeout=180)
 G_lrt = create_graph(mrt_response_json)
 
-# # Import to CSV for reference
-n, e = ox.graph_to_gdfs(G_walk)
-e.to_csv("data/edge.csv")
-n.to_csv("data/node.csv")
 
 # storing all nodes into a list
 walkNodeList = list(G_walk.nodes.values())
@@ -160,7 +156,8 @@ for k in mrtNodeList:  # check for nodes which are stations
     except:  # to catch and skip noneType iterations
         continue
 
-locator = Nominatim(user_agent="myGeocoder", timeout=20)
+# DO NOT CHANGE TIMEOUT... THIS IS TO PREVENT YOUR IP FROM BEING BANNED
+locator = Nominatim(user_agent="myGeocoder", timeout=30)
 
 building = {}
 autofillList = []
@@ -172,13 +169,13 @@ for k in walkNodeList:
     coordinates = k.get('y'), k.get('x')
     location = locator.reverse(coordinates)
     k["address"] = location[0]
+    print(count)
+    count += 1
     if location[0] not in autofillList:
         print(location[0])
         autofillList.append(location[0])
     else:
         continue
-    if count == 100:
-        break
 
 for item in mrtNodeList:
     try:
@@ -194,4 +191,4 @@ print("--- %s seconds to run all calculations ---" % round((time.time() - start_
 
 print(autofillList)
 df = pd.DataFrame(walkNodeList)
-df.to_csv('data/rg_test_walk_node.csv')
+df.to_csv('rg_test_walk_node.csv')
