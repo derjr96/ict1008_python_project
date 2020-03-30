@@ -3,6 +3,11 @@ body {
   color: #333333;
 }
 
+h2 {
+  text-align:center;
+  text-decoration:underline;
+  margin-top: 25px;
+}
 .map-container{
   overflow:hidden;
   position:relative;
@@ -118,9 +123,17 @@ input[type=text] {
   background-color: #f1f1f1;
   width: 100%;
 }
+
 input[type=submit] {
-  background-color: DodgerBlue;
+  border-radius: 10px;
+  margin-top: 15px;
+  background-color: grey;
   color: #fff;
+}
+
+input[type=button] {
+  border-radius: 10px;
+  margin-top: 15px;
 }
 
 .autocomplete-items {

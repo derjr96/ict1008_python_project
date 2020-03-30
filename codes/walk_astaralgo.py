@@ -83,10 +83,6 @@ class AstarWalkAlgo:
     def generate(self):
         # main code
 
-        # storing all nodes into a list
-        self.walkNodeList = list(self.G_walk.nodes.values())
-        self.walkEdgeList = list(self.G_walk.edges.items())
-
         # user input (GUI TEAM, user input in text area will be stored here)
         # src = "Punggol"  # punggol will return punggol mrt coordinates
         # des = "Blk 612, Punggol Drive, Punggol"  # random hdb

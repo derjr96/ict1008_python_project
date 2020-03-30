@@ -139,7 +139,7 @@ punggol = (1.403948, 103.909048)
 distance = 2000
 
 print("Creating Walk MultiDiGraph...")
-G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
+G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk', simplify=False)
 
 print("Storing Walk MultiDiGraph...")
 walkNodeList = list(G_walk.nodes.values())
@@ -165,9 +165,11 @@ print("Creating autofill list...")
 
 rgCSV = pandas.read_csv("data/rg_test_walk_node.csv")
 addrValue = rgCSV["address"].tolist()
+rgosmid = rgCSV[['y', 'x', 'osmid', 'address']]
+rgposmid = [tuple(x) for x in rgosmid.values]
 addr = []
 
-locator = Nominatim(user_agent="myGeocoder", timeout=20)
+locator = Nominatim(user_agent="myGeocoder", timeout=30)
 
 for x in addrValue:
     x = html.escape(x)
@@ -184,6 +186,7 @@ for item in mrtNodeList:
             addr.append(location[0])
     except:  # to catch and skip noneType iterations
         continue
+
 addr.append('Punggol')
 addr = addr[::-1]
 

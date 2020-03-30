@@ -57,8 +57,11 @@ def home():
             walkvalue = aswa.printout()[0]
             walkvalue1 = aswa.printout()[1]
             walkvalue2 = aswa.printout()[2]
+            print("walk value: ", walkvalue)
+            print("walk value1: ", walkvalue1)
+            print("walk value2: ", walkvalue2)
             return render_template("base.html", walkvariable=walkvalue, walkvariable1=walkvalue1,
-                                   walkvariable2=walkvalue2)
+                                   walkvariable2=walkvalue2, addr=json.dumps(addr))
             # redirect("/walking")
         elif str(request.form["dropdown"]) == "WalkandMRT":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -78,7 +81,8 @@ def home():
             walklrtvalue7 = asawl.printout2()[7]
             return render_template("base.html", wlvariable=walklrtvalue, wlvariable1=walklrtvalue1,
                                    wlvariable2=walklrtvalue2, wlvariable3=walklrtvalue3, wlvariable4=walklrtvalue4,
-                                   wlvariable5=walklrtvalue5, wlvariable6=walklrtvalue6, wlvariable7=walklrtvalue7)
+                                   wlvariable5=walklrtvalue5, wlvariable6=walklrtvalue6, wlvariable7=walklrtvalue7,
+                                   addr=json.dumps(addr))
             # redirect("/walkinglrt")
         elif str(request.form["dropdown"]) == "WalkandBus":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -86,7 +90,7 @@ def home():
             print(dropdown)
             result = DjWalkBus.plotShortestWalkBus(G_walk, G_bus, address_input, address_input1)
             return render_template("base.html", wbvariable=result[0], wbvariable1=result[1], wbvariable2=result[2],
-                                   wbvariable3=result[3])
+                                   wbvariable3=result[3], addr=json.dumps(addr))
             # redirect("/walkingbus")
         elif str(request.form["dropdown"]) == "WalkBusMrt":
             dropdown = str(request.form["dropdown"])  # dropdown value
@@ -106,7 +110,7 @@ def home():
             allvalue7 = allthree.printout3()[7]
             return render_template("base.html", wlbvariable=allvalue, wlbvariable1=allvalue1, wlbvariable2=allvalue2,
                                    wlbvariable3=allvalue3, wlbvariable4=allvalue4, wlbvariable5=allvalue5,
-                                   wlbvariable6=allvalue6, wlbvariable7=allvalue7)
+                                   wlbvariable6=allvalue6, wlbvariable7=allvalue7, addr=json.dumps(addr))
 
         return render_template("base.html", addr=json.dumps(addr))
     elif request.method == "GET":

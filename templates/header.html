@@ -59,7 +59,6 @@
 
     </main>
 
-
     <!-- Optional JavaScript -->
      <script>
         var addr = JSON.parse({{ addr|tojson|safe }})
@@ -76,7 +75,7 @@
                 a.setAttribute("class", "autocomplete-items");
                 this.parentNode.appendChild(a);
                 var count = 0;
-                for (i = 0; i < arr.length; i++) {
+                for (var i = 0; i < arr.length; i++) {
                     if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
                         console.log(arr[i]);
                         b = document.createElement("DIV");
@@ -142,8 +141,8 @@
             closeAllLists(e.target);
         });
         }
-
-        autocomplete(document.getElementById("autocomplete"), addr);
+        autocomplete(document.getElementById("address_input"), addr);
+        autocomplete(document.getElementById("address_input1"), addr);
     </script>
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
