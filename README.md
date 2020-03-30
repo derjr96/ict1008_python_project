@@ -109,10 +109,10 @@ Implementing and plotting network
 * [X] Planning
 * [X] Execute own parts
 * [X] Implementation
-* [ ] Integration
-* [ ] Debugging
+* [X] Integration
+* [X] Debugging
 * [ ] Code Cleanup
-* [ ] Poster
+* [X] Poster
 * [ ] Video
 
 ## Collaborators with Contributions
