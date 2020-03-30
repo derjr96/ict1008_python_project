@@ -109,7 +109,7 @@ def home():
                                    wlbvariable3=allvalue3, wlbvariable4=allvalue4, wlbvariable5=allvalue5,
                                    wlbvariable6=allvalue6, wlbvariable7=allvalue7, addr=json.dumps(addr))
 
-        return render_template("base.html", addr=json.dumps(addr))
+        # return render_template("base.html", addr=json.dumps(addr))
     elif request.method == "GET":
         return render_template("home.html", addr=json.dumps(addr))
 
