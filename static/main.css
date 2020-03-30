@@ -102,12 +102,18 @@ a.article-title:hover {
   max-width: 800px;
   margin: 0 auto;
 }
+
 .loading {
   margin-top: 10em;
   text-align: center;
   color: gray;
 }
 
+.information {
+  margin-top: 25px;
+  padding-left:50px;
+  padding-right:50px;
+}
 .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
