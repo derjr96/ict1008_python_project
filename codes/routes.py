@@ -57,9 +57,6 @@ def home():
             walkvalue = aswa.printout()[0]
             walkvalue1 = aswa.printout()[1]
             walkvalue2 = aswa.printout()[2]
-            print("walk value: ", walkvalue)
-            print("walk value1: ", walkvalue1)
-            print("walk value2: ", walkvalue2)
             return render_template("base.html", walkvariable=walkvalue, walkvariable1=walkvalue1,
                                    walkvariable2=walkvalue2, addr=json.dumps(addr))
             # redirect("/walking")
