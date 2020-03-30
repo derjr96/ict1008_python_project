@@ -5,14 +5,14 @@
         <div class="col-4">
             <div class="container">
                 <div id="EnterAddress" class="tabcontent">
-                    <h2>Path Find</h2>
-                    <form style="margin-top: 25px" action="{{ url_for('home') }}" method="post">
+                    <h2>Address:</h2>
+                    <form style="margin-top: 25px" action="{{ url_for('home') }}" method="post" autocomplete="off">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Address</span>
                             </div>
                             <input type="text" class="form-control" name="address_input"
-                                   placeholder="Enter Starting Address" id="address_input" autocomplete="off">
+                                   placeholder="Enter Starting Address" id="address_input">
                             <!-- Pass in Address here as value=""-->
                         </div>
                         <div class="input-group mb-3">
@@ -20,7 +20,7 @@
                                 <span class="input-group-text">Address</span>
                             </div>
                             <input type="text" class="form-control" name="address_input1"
-                                   placeholder="Enter Destination Address" id="address_input1" autocomplete="off">
+                                   placeholder="Enter Destination Address" id="address_input1">
                             <!-- Pass in Address here as value=""-->
                         </div>
                         <label for="Travel2">Travel Method:</label>
