@@ -245,8 +245,14 @@ class WalkBusLrt:
             final = self.walk_astar(strtpt[0], endpt[0])
 
             # plotting map to folium
-            m = ox.plot_route_folium(self.G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
-                                     popup_attribute="There is no LRT to bring you to your destination, please walk.")
+            final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
+
+            m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1,
+                            tooltip="There is no LRT to bring you to your destination, please walk.").add_to(m)
+
             m.save('templates/default.html')
         else:
             reachLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtstart), method='euclidean',
@@ -275,7 +281,9 @@ class WalkBusLrt:
                     # print("break")
                     break
 
-            m = folium.Map(location=punggol, distance=distance, zoom_start=15)
+            m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
 
             if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
                 if lrtstart in pw:

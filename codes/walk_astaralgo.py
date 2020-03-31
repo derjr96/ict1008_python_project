@@ -2,6 +2,7 @@ import osmnx as ox
 import heapq
 import time
 import math
+import folium
 
 
 class AstarWalkAlgo:
@@ -35,6 +36,14 @@ class AstarWalkAlgo:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         dist = radius * c * 1000
         return dist
+
+    # conversion of route to coords
+    def convertRoute(self, coords):
+        output = []
+        for x in range(len(coords)):  # Parent Array
+            for i in range(len(coords[x])):  # Inner Array
+                output.append([coords[x][i][1], coords[x][i][0]])
+        return output
 
     # ASTAR ALGORITHM
     def walk_astar(self, start_point, end_point):
@@ -82,6 +91,8 @@ class AstarWalkAlgo:
 
     def generate(self):
         # main code
+        punggol = (1.403948, 103.909048)
+        distance = 2000
 
         # user input (GUI TEAM, user input in text area will be stored here)
         # src = "Punggol"  # punggol will return punggol mrt coordinates
@@ -106,7 +117,13 @@ class AstarWalkAlgo:
         self.walkvariable2 = ("Distance travelled: " + str(round((totaldist / 1000), 2)) + " km")
 
         # plotting map to folium
-        m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
+        final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
+
+        m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+        folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
+
         #m.save("templates/astar_walking.html")
         m.save("templates/default.html")
         print("Successfully overwrite default.html!!!")
