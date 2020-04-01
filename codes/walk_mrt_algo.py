@@ -105,7 +105,7 @@ class AstarWalkMrtAlgo:
         stat = []
         strt = 0
 
-        # finding start station (working)
+        # finding start station
         if use == "no":
             for k in self.mrtEdgeList:
                 h = self.heuristic(self.mrtn_latlon(start_point), self.mrtn_latlon(k[0][1]))
@@ -134,6 +134,8 @@ class AstarWalkMrtAlgo:
 
                 # reverse the path list into start to end
                 path = path[::-1]
+
+                # finalret is an array that contains the pathing and the total distances travelled
                 finalret.append(path)
                 finalret.append(temp[1])
                 return finalret
@@ -175,6 +177,8 @@ class AstarWalkMrtAlgo:
 
                 # reverse the path list into start to end
                 path = path[::-1]
+
+                # finalret is an array that contains the pathing and the total distances travelled
                 finalret.append(path)
                 finalret.append(temp[1])
                 return finalret
@@ -203,6 +207,7 @@ class AstarWalkMrtAlgo:
         punggol = (1.403948, 103.909048)
         distance = 2000
 
+        # creation of arrays to store the station nodes in east(pe) and west(pw) array
         pe = []
         pw = []
         for k in self.mrtNodeList:  # check for nodes which are stations
@@ -214,12 +219,7 @@ class AstarWalkMrtAlgo:
             except:  # to catch and skip noneType iterations
                 continue
 
-        # testing algorithmn speed
-        start_time = time.time()
-        # user input (GUI TEAM, user input in text area will be stored here)
-        # src = "Nibong, Punggol"     # 406B, Northshore Drive, Punggol
-        # punggol will return punggol mrt coordinates 406B, Northshore Drive, Punggol - 220A Sumang Lane, Singapore 821220 - Blk 126A, Punggol Field, Punggol - Waterway Cascadia, 314A, Punggol Way, Punggol
-        # des = "406B, Northshore Drive, Punggol"  # random hdb 60 Punggol East, Singapore 828825
+        # user input
         startpoint = ox.geocode(self.src)
         endpoint = ox.geocode(self.des)
 
@@ -233,63 +233,74 @@ class AstarWalkMrtAlgo:
         lrtstart = self.lrt_nearnode(locateStrtLrt[0])[1]
         lrtend = self.lrt_nearnode(lcoateEndLrt[0])[1]
 
+        # testing algorithmn speed
+        start_time = time.time()
+
         if lrtstart == lrtend or (lrtstart == 6587709456 and lrtend == 6587709457) or \
                 (lrtstart == 6587709457 and lrtend == 6587709456):
             final = self.walk_astar(strtpt[0], endpt[0])
 
-            # plotting map to folium
+            # converting osm ids to coords
             final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
 
+            # plotting map to folium
             m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
             folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
             folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
             folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1,
                             tooltip="There is no LRT to bring you to your destination, please walk.").add_to(m)
 
-            # m.save('templates/astaralgo_walklrt.html')
+            # saving the plotted coordinates to an html file and overwrite older version
             m.save('templates/default.html')
+            print("Successfully overwrite default.html!!!")
         else:
             reachLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtstart), method='euclidean', return_dist=True)
             leaveLRT = ox.get_nearest_node(self.G_walk, self.mrtn_latlon(lrtend), method='euclidean', return_dist=True)
 
+            # declaration of west and east flags
             eastlrt = 0
             westlrt = 0
             for i in self.mrtNodeList:
                 mrtid = i.get('osmid')
                 if mrtid == lrtstart and lrtstart in pe:
                     eastlrt += 1
-                    # print("scenario1")
+                    # print("scenario1: start lrt station in east loop")
                 elif mrtid == lrtstart and lrtstart in pw:
-                    # print("scenario2")
+                    # print("scenario2: start lrt station in west loop")
                     westlrt += 1
                 elif mrtid == lrtend and lrtend in pe:
-                    # print("scenario3")
+                    # print("scenario3: end lrt station in east loop")
                     eastlrt += 1
                 elif mrtid == lrtend and lrtend in pw:
-                    # print("scenario4")
+                    # print("scenario4: end lrt station in west loop")
                     westlrt += 1
                 elif westlrt == 2 or eastlrt == 2:  # both lrt station in the same lrt loop
                     break
                 elif westlrt == 1 and eastlrt == 1:  # both lrt station in different lrt loop
-                    # print("break")
                     break
 
+            # creating base map and adding start and end point markers to the folium map
             m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
             folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
             folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
 
+            # total Complexity: N + 4Log(E + V)
             if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
-                # algo testing walk and lrt
+                # executing walk algorithm to get back pathing (Complexity: 2*Log(E + V))
                 walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
                 walkFromStation = self.walk_astar(leaveLRT[0], endpt[0])
+
+                # ensuring the direction is travelled correctly
                 if lrtstart in pw:
+                    # executing lrt algorithm to get back pathing (Complexity: N + 2*Log(E + V))
                     lrtfirst = self.lrt_astar(self.lrt_nearnode(lrtstart)[1], 6587709456, "no")
                     lrtsecond = self.lrt_astar(6587709457, self.lrt_nearnode(lrtend)[1], "yes")
                 elif lrtstart in pe:
+                    # executing lrt algorithm to get back pathing (Complexity: N + 2*Log(E + V))
                     lrtfirst = self.lrt_astar(self.lrt_nearnode(lrtstart)[1], 6587709457, "no")
                     lrtsecond = self.lrt_astar(6587709456, self.lrt_nearnode(lrtend)[1], "yes")
 
-                # converting all osmnx nodes to coordinates
+                # converting osm ids to coords
                 walkToStation[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, walkToStation[0]))
                 walkFromStation[0] = self.convertRoute(
                     ox.plot.node_list_to_coordinate_lines(self.G_walk, walkFromStation[0]))
@@ -331,13 +342,18 @@ class AstarWalkMrtAlgo:
                                 weight=2, opacity=1).add_to(m)
                 folium.PolyLine(([lrtsecond[0][-1]] + walkFromStation[0] + [endpoint]), color="blue",
                                 weight=2, opacity=1).add_to(m)
-                # m.save('templates/astaralgo_walklrt.html')
-                m.save('templates/default.html')
 
+                # saving the plotted coordinates to an html file and overwrite older version
+                m.save('templates/default.html')
+                print("Successfully overwrite default.html!!!")
+
+            # total Complexity: N + 3Log(E + V)
             else:  # if both stations are found on the same lrt loop
-                # algo testing walk and lrt
+                # executing walk algorithm to get back pathing (Complexity: 2*Log(E + V))
                 walkToStation = self.walk_astar(strtpt[0], reachLRT[0])
                 walkFromStation = self.walk_astar(leaveLRT[0], endpt[0])
+
+                # executing lrt algorithm to get back pathing (Complexity: N + Log(E + V))
                 lrtfinal = self.lrt_astar(self.lrt_nearnode(lrtstart)[1], self.lrt_nearnode(lrtend)[1], "no")
 
                 # converting all osmnx nodes to coordinates
@@ -349,8 +365,10 @@ class AstarWalkMrtAlgo:
                 # calculating estimated time, cost, distance to reach the destination
                 statDist = 10300 / 14
                 totalDistLRT = (lrtfinal[1]) / 1000  # convert to meters to km
+
+                # retrieving user's system time
                 now = datetime.now()
-                timenow = now.strftime("%H")
+                timenow = now.strftime("%H")    # only taking into consideration the Hours
                 waitTime = 0
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
@@ -366,6 +384,8 @@ class AstarWalkMrtAlgo:
                         (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
+
+                # storing the calculations into variables to pass over to flask to print out for user
                 self.wlvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
                 self.wlvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
                 self.wlvariable6 = ("Transfer: None.")
@@ -376,10 +396,13 @@ class AstarWalkMrtAlgo:
                                 weight=2, opacity=1).add_to(m)
                 folium.PolyLine(([lrtfinal[0][-1]] + walkFromStation[0] + [endpoint]), color="blue",
                                 weight=2, opacity=1).add_to(m)
-                # m.save('templates/astaralgo_walklrt.html')
+
+                # saving the plotted coordinates to an html file and overwrite older version
                 m.save('templates/default.html')
+                print("Successfully overwrite default.html!!!")
 
         self.wlvariable7 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
 
     def printout2(self):
-        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4, self.wlvariable5, self.wlvariable6, self.wlvariable7]
+        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4,
+                self.wlvariable5, self.wlvariable6, self.wlvariable7]

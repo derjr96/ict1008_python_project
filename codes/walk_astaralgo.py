@@ -46,13 +46,12 @@ class AstarWalkAlgo:
         return output
 
     # ASTAR ALGORITHM
-    def walk_astar(self, start_point, end_point):
+    def walk_astar(self, start_point, end_point, main_h):
         closepath = {}
         path = []
         routeq = []
         finalret = []
 
-        main_h = self.heuristic(self.latlon(start_point), self.latlon(end_point))
         # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
         heapq.heappush(routeq, (0, 0, None, start_point))
         closepath[start_point] = None
@@ -72,6 +71,8 @@ class AstarWalkAlgo:
 
                 # reverse the path list into start to end
                 path = path[::-1]
+
+                # finalret is an array that contains the pathing and the total distances travelled
                 finalret.append(path)
                 finalret.append(temp[1])
                 return finalret
@@ -82,54 +83,64 @@ class AstarWalkAlgo:
                             continue
                         else:
                             h = self.heuristic(self.latlon(i[0][1]), self.latlon(end_point))
+                            # to ensure that the pathing goes towards the end point and not push in paths going off
                             if h < main_h:
                                 cur_length = i[1].get('length') + temp[1]
                                 heur = h + cur_length
                                 heapq.heappush(routeq, (heur, cur_length, temp[3], i[0][1]))
                                 # adding previous path to close path dict to prevent an infinite loop of short path
                                 closepath[i[0][1]] = temp[3]
+                            else:
+                                continue
 
     def generate(self):
         # main code
+        # creating variable to store punggol boundary
         punggol = (1.403948, 103.909048)
         distance = 2000
 
-        # user input (GUI TEAM, user input in text area will be stored here)
-        # src = "Punggol"  # punggol will return punggol mrt coordinates
-        # des = "Blk 612, Punggol Drive, Punggol"  # random hdb
+        # user input
         startpoint = ox.geocode(self.src)
         endpoint = ox.geocode(self.des)
-
         startosmid = ox.get_nearest_node(self.G_walk, startpoint, method='euclidean', return_dist=True)
         endosmid = ox.get_nearest_node(self.G_walk, endpoint, method='euclidean', return_dist=True)
 
-        # testing algorithmn speed
+        # calculating heuristic distance from start to end point
+        main_h = self.heuristic(self.latlon(startosmid[0]), self.latlon(endosmid[0]))
+
+        # recording down algorithmn speed
         start_time = time.time()
-        final = self.walk_astar(startosmid[0], endosmid[0])
-        print("--- %s seconds ---" % round((time.time() - start_time), 2))
-        self.walkvariable = ("Time taken for run the algorithm: %s seconds" % round((time.time() - start_time), 2))
+
+        # running A* algorithm with start osmid, end osmid and heuristic distance of start and end point
+        # total A* algorithm complexity: Log(E + V)
+        final = self.walk_astar(startosmid[0], endosmid[0], main_h)
+        end_time = round((time.time() - start_time), 2)
+        print("--- %s seconds ---" % end_time)
+
+        # calculations for Time taken and distance travelled
+        totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
 
         # calculating estimated time to reach the destination taking avg human walking speed of 1.4m/s
-        totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
         estwalk = totaldist / (1.4 * 60)
         print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
+
+        # storing the calculations into variables to pass over to flask to print out for user
+        self.walkvariable = ("Time taken for run the algorithm: %s seconds" % end_time)
         self.walkvariable1 = ("Time taken: " + str(round(estwalk)) + " minutes") 
         self.walkvariable2 = ("Distance travelled: " + str(round((totaldist / 1000), 2)) + " km")
 
-        # plotting map to folium
+        # converting osm ids to coords
         final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
 
+        # plotting map to folium
         m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
         folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
         folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
         folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
 
-        #m.save("templates/astar_walking.html")
+        # saving the plotted coordinates to an html file
         m.save("templates/default.html")
         print("Successfully overwrite default.html!!!")
 
     def printout(self):
         return [self.walkvariable, self.walkvariable1, self.walkvariable2]
-
-# aswa = AstarWalkAlgo("Punggol", "Blk 612, Punggol Drive, Punggol")
-# aswa.generate()

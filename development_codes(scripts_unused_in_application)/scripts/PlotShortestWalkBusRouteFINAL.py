@@ -108,7 +108,7 @@ def plotShortestWalkBus(startLocation, endLocation):
         folium.PolyLine(finalWalkFromBusStopToDestination, color="green", weight=4, opacity=1).add_to(m)
 
     # For creating the Markers on the map with: BUS STOP DATA, BUS SERVICES TO TAKE AT THAT STOP, BUSSTOP NAME
-    with open('../bus_data/all_bus_stops.json') as bus_stop:
+    with open('../../bus_data/all_bus_stops.json') as bus_stop:
         data = json.load(bus_stop)
         count = 0
         counter2 = 0
@@ -119,7 +119,7 @@ def plotShortestWalkBus(startLocation, endLocation):
         for i in range(len(paths) - 1):
             tupleOfPairs.append((paths[i], paths[i + 1]))
 
-        df = pd.read_csv("../bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Service(s)'])
+        df = pd.read_csv("../../bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Service(s)'])
         for x in df.values:
             if math.isnan(x[0]):
                 pass
