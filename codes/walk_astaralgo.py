@@ -134,8 +134,8 @@ class AstarWalkAlgo:
 
         # plotting map to folium
         m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
-        folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
-        folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.Marker(startpoint, popup=self.src, icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.Marker(endpoint, popup=self.des, icon=folium.Icon(color='red', icon='record')).add_to(m)
         folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
 
         # saving the plotted coordinates to an html file

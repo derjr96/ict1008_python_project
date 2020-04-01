@@ -245,8 +245,8 @@ class AstarWalkMrtAlgo:
 
             # plotting map to folium
             m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
-            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
-            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(startpoint, popup=self.src, icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup=self.des, icon=folium.Icon(color='red', icon='record')).add_to(m)
             folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1,
                             tooltip="There is no LRT to bring you to your destination, please walk.").add_to(m)
 
@@ -281,8 +281,8 @@ class AstarWalkMrtAlgo:
 
             # creating base map and adding start and end point markers to the folium map
             m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
-            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
-            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(startpoint, popup=self.src, icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup=self.des, icon=folium.Icon(color='red', icon='record')).add_to(m)
 
             # total Complexity: N + 4Log(E + V)
             if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
