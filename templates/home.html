@@ -3,12 +3,13 @@
 
     <div class="row no-gutters">
         <div class="col-4">
+            <nav class="navbar navbar-light" style="background-color: #cbd5db;">
+                <div style="text-align: center;">
+                    <img style="width: 50px;height: 50px;" src="{{ url_for('static', filename='TeamLogo.png') }}">
+                </div>
+            </nav>
             <div class="container">
                 <div id="EnterAddress" class="tabcontent">
-                    <div style="text-align: center;">
-                        <img src="{{ url_for('static', filename='Logo.png') }}">
-                    </div>
-                    <h2>Path Find</h2>
                     <!-- <form style="margin-top: 25px" action="{{ url_for('home') }}" method="post"> -->
                     <form style="margin-top: 25px" action="" method="post">
                         <div class="input-group mb-3">
@@ -38,6 +39,9 @@
                         <input type="submit" value="Submit" id="submit_button"/>
                         <input type="button" id="btn2" value="Refresh" />
                     </form>
+                </div>
+                <div style="position:fixed; bottom: 20px; left: 20px;">
+                    <a href="https://github.com/derjr96/ict1008_python_project"><img src="{{ url_for('static', filename='Logo.png') }}" style="width: 50px; height: 50px; background-color: #444444; border-radius: 50%;"></a>
                 </div>
             </div>
         </div>
