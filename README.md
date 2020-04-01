@@ -13,6 +13,7 @@
 * [Project Details](#project-details)
 * [Milestones](#milestones)
 * [Collaborators with Contributions](#collaborators-with-contributions)
+* [Credit](#credit)
 
 ## Path Find
 
@@ -111,7 +112,7 @@ Implementing and plotting network
 * [X] Implementation
 * [X] Integration
 * [X] Debugging
-* [ ] Code Cleanup
+* [X] Code Cleanup
 * [X] Poster
 * [ ] Video
 
@@ -124,3 +125,6 @@ Implementing and plotting network
 4. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious) | GUI
 5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard) | GUI, Video & Poster
 6. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr) | GUI
+
+## Credit
+* Geoff Boeing - [OSMnx](https://github.com/gboeing/osmnx) | Creator of OSMnx
