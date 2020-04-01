@@ -139,7 +139,7 @@ punggol = (1.403948, 103.909048)
 distance = 2000
 
 print("Creating Walk MultiDiGraph...")
-G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk', simplify=False)
+G_walk = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk', simplify=True)
 
 print("Storing Walk MultiDiGraph...")
 walkNodeList = list(G_walk.nodes.values())
