@@ -96,8 +96,10 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
             return list(collections.deque(path))
 
     try:
+
+        # To create edges on dijkstra graph, the tuple consists of ( SRC, DEST, Dist)
         tupleProcessed = []
-        df = pd.read_csv("bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
+        df = pd.read_csv("data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
         for x in df.values:
             if math.isnan(x[0]):
                 pass
@@ -114,6 +116,7 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
         if len(result) == 0:
             print("Path not found!")
         else:
+            # Return list of bus stop codes
             return result
 
     except:

@@ -18,12 +18,15 @@ def convertRoute(coords):
     return output
 
 
+    # Takes in Walk and Drive Digraph with start location and endlocation (Address)
 def plotShortestWalkBus(W, D, startLocation, endLocation):
     startTime = time.time()
 
+    # Converts address to coords
     startLocation = ox.geocode(startLocation)
     endLocation = ox.geocode(endLocation)
 
+    #Convert coords to tuple of string lat and lon
     startLocation = (str(startLocation[0]), str(startLocation[1]))
     endLocation = (str(endLocation[0]), str(endLocation[1]))
 
@@ -36,8 +39,8 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
     endBusStopNode = None
     radius = 100
 
-    # Find busstop to walk to, retrieve its busstopCode, latlon
-
+    # Find busstop to walk to (starts from range 50m, increases till find a busstop) , retrieve its busstopCode, latlon
+    # Uses overpass api
     while (startBusStopNode == None):
         startBusStopNode = api.query(
             "node(around:" + str(radius) + "," + startLocation[0] + "," + startLocation[
@@ -57,10 +60,11 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
     except:
         print("Cannot find walk route.")
 
-    # Find destination busstop, retrieve its busStopCode, latlon
 
     radius = 100
 
+    # Find Dest busstop from final dest (starts from range 50m, increases till find a busstop) , retrieve its busstopCode, latlon
+    # Uses overpass api
     while (endBusStopNode == None):
         endBusStopNode = api.query(
             "node(around:" + str(radius) + "," + endLocation[0] + "," + endLocation[
@@ -74,7 +78,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
             endBusStopNode = None
             radius += 100
 
-    # Find path of FINAL WALK from BUS STOP to DESTINATION
+    # Find path of FINAL WALK from Dest BUS STOP to DESTINATION
     try:
         finalWalkFromBusStopToDestination = plotShortestWalkRoute.plotWalk(W, endBusStopLatLon, endLocation)
     except:
@@ -97,19 +101,22 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         print("Unable to find route. Missing Map Data")
 
     plotTime = time.time()
+
     # Plot Final Graph
     m = folium.Map(location=punggol, distance=distance, zoom_start=15)
+
+    # Don't plot if no path
     if len(initialWalkToBusStop) > 0:
         folium.PolyLine(initialWalkToBusStop, color="blue", weight=4, opacity=1).add_to(m)
 
     folium.PolyLine(busRouteToPlot, color="purple", weight=4, opacity=1).add_to(m)
 
-
+    # Don't plot if no path
     if len(finalWalkFromBusStopToDestination) > 0:
         folium.PolyLine(finalWalkFromBusStopToDestination, color="blue", weight=4, opacity=1).add_to(m)
 
     # For creating the Markers on the map with: BUS STOP DATA, BUS SERVICES TO TAKE AT THAT STOP, BUSSTOP NAME
-    with open('bus_data/all_bus_stops.json') as bus_stop:
+    with open('data/all_bus_stops.json') as bus_stop:
         data = json.load(bus_stop)
         count = 0
         counter2 = 0
@@ -120,7 +127,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         for i in range(len(paths) - 1):
             tupleOfPairs.append((paths[i], paths[i + 1]))
 
-        df = pd.read_csv("bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Service(s)'])
+        df = pd.read_csv("data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Service(s)'])
         for x in df.values:
             if math.isnan(x[0]):
                 pass
@@ -141,7 +148,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         for i in range(len(busServices)):
             busServices[i] = plotShortestBusRoute.removeDupes(busServices[i])
 
-        # Create the node with the datas
+        # Create the marker nodes with the bus services to visualize on map
         for i in paths:
             for z in data['value']:
                 if int(z['BusStopCode']) == paths[count]:
@@ -162,9 +169,3 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         totalTime = ["Total calculation time: {first} seconds.".format(first=round(endTime - startTime, 2)), "Plotting of Map takes: {second}.".format(second=round(endTime - plotTime, 2)), "Time taken: {third}".format(third=round(endTime - startTime, 2))]
         totalTime.append("Click each node for bus information")
         return totalTime
-
-# Test Cases (NOT ALL BUS STOPS ARE ON OSM OR ARE ACCURATE. MANUAL ADDITION OF MAP DATA ONLINE:
-# 1. Punggol Green Primary - Punggol Bus Interchange ('1.4021', '103.89872') - ('1.40394', '103.90263') Checked
-# 2. Punggol Point Park - Punggol Bus Interchange ('1.4208568','103.9103653') - ('1.40394', '103.90263') Checked
-# 3. EdgeField Secondary - Oasis Terrace ('1.4005349','103.9016396') - ('1.40283','103.91279') Checked Best Result
-# 4. Punggol BUs Interchange - Oasis Terrace ('1.4021', '103.89872') - ('1.40283','103.91279')

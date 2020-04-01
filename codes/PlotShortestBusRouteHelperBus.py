@@ -23,7 +23,7 @@ def findPath(G, paths):
     listOfTuplesStartEndLatLon = []  # Stored as [ ((Start1 lat, Start1 lon) , (End2 lat, End2 lon)) ] format
     route = []  # Routes to travel from [Route Start1 to End 2]format
 
-    with open('bus_data/Punggol_Bus_Stops.json') as bus_stop:
+    with open('data/Punggol_Bus_Stops.json') as bus_stop:
         data = json.load(bus_stop)
 
         for i in paths:
