@@ -97,7 +97,7 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
 
     try:
         tupleProcessed = []
-        df = pd.read_csv("../bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
+        df = pd.read_csv("bus_data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
         for x in df.values:
             if math.isnan(x[0]):
                 pass

@@ -16,18 +16,14 @@ def removeDupes(list):
     return tempArray
 
 
-def findPath(paths):
+def findPath(G, paths):
     startTime = time.time()
-
-    punggol = (1.4041070, 103.9025242)  # Punggol Interchange as mid point
-    distance = 3000
-    G = ox.graph_from_point(punggol, distance=distance, network_type='drive_service')
 
     listOfNodes = []  # Stored as [ (lat, lon, BusStopCode) ] format
     listOfTuplesStartEndLatLon = []  # Stored as [ ((Start1 lat, Start1 lon) , (End2 lat, End2 lon)) ] format
     route = []  # Routes to travel from [Route Start1 to End 2]format
 
-    with open('../bus_data/Punggol_Bus_Stops.json') as bus_stop:
+    with open('bus_data/Punggol_Bus_Stops.json') as bus_stop:
         data = json.load(bus_stop)
 
         for i in paths:
@@ -58,4 +54,4 @@ def findPath(paths):
 
     print("Bus Route Retrieval Takes: ", round((endTime - startTime), 2))
 
-    return route, listOfTuplesStartEndLatLon
+    return route

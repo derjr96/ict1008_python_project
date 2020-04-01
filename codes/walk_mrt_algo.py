@@ -16,6 +16,16 @@ class AstarWalkMrtAlgo:
         self.walkEdgeList = walkEdgeList
         self.mrtEdgeList = mrtEdgeList
 
+        # for walk and mrt output
+        self.wlvariable = 0
+        self.wlvariable1 = 0
+        self.wlvariable2 = 0
+        self.wlvariable3 = 0
+        self.wlvariable4 = 0
+        self.wlvariable5 = 0
+        self.wlvariable6 = 0
+        self.wlvariable7 = 0
+
         self.src = s
         self.des = d
 
@@ -25,18 +35,30 @@ class AstarWalkMrtAlgo:
             print("Student Fare: $0.42")
             print("Adult Fare: $0.92")
             print("Senior Citizen Fare: $0.59")
+            self.wlvariable1 = "Student Fare: $0.42"
+            self.wlvariable2 = "Adult Fare: $0.92"
+            self.wlvariable3 = "Senior Citizen Fare: $0.59"
         elif 4.2 >= distance > 3.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.02")
             print("Senior Citizen Fare: $0.66")
+            self.wlvariable1 = "Student Fare: $0.47"
+            self.wlvariable2 = "Adult Fare: $1.02"
+            self.wlvariable3 = "Senior Citizen Fare: $0.66"
         elif 5.2 >= distance > 4.2:
             print("Student Fare: $0.52")
             print("Adult Fare: $1.12")
             print("Senior Citizen Fare: $0.73")
+            self.wlvariable1 = "Student Fare: $0.52"
+            self.wlvariable2 = "Adult Fare: $1.12"
+            self.wlvariable3 = "Senior Citizen Fare: $0.73"
         elif 6.2 >= distance > 5.2:
             print("Student Fare: $0.47")
             print("Adult Fare: $1.22")
             print("Senior Citizen Fare: $0.80")
+            self.wlvariable1 = "Student Fare: $0.47"
+            self.wlvariable2 = "Adult Fare: $1.22"
+            self.wlvariable3 = "Senior Citizen Fare: $0.80"
 
     # finding which mrt station is closest to the start/end point
     def lrt_nearnode(self, srctomrt):
@@ -216,8 +238,14 @@ class AstarWalkMrtAlgo:
             final = self.walk_astar(strtpt[0], endpt[0])
 
             # plotting map to folium
-            m = ox.plot_route_folium(self.G_walk, final[0], route_color='blue', route_width=5, tiles="OpenStreetMap",
-                                     popup_attribute="There is no LRT to bring you to your destination, please walk.")
+            final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
+
+            m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1,
+                            tooltip="There is no LRT to bring you to your destination, please walk.").add_to(m)
+
             # m.save('templates/astaralgo_walklrt.html')
             m.save('templates/default.html')
         else:
@@ -247,6 +275,8 @@ class AstarWalkMrtAlgo:
                     break
 
             m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+            folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+            folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
 
             if westlrt == 1 and eastlrt == 1:  # if both stations are found on both loop (west loop and east loop)
                 # algo testing walk and lrt
@@ -275,17 +305,20 @@ class AstarWalkMrtAlgo:
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
                     waitTime = 3
+                    self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
                     waitTime = 7
+                    self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
                 totatTimeLRT = numStation + (
                             (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                      str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: 1, Punggol Station")
+                self.wlvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes\n")
+                self.wlvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                self.wlvariable6 = ("Transfer: 1, Punggol Station")
 
                 # plotting on folium map
                 folium.PolyLine(lrtfirst[0], color="red", weight=2, opacity=1,
@@ -322,17 +355,20 @@ class AstarWalkMrtAlgo:
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
                     waitTime = 3
+                    self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
                     waitTime = 7
+                    self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
                 totatTimeLRT = numStation + (
                         (totalDistLRT * 1000) / (45000 / 60)) + waitTime  # avg mrt speed 45km/hr - 750m per minute
                 totalDistWalk = (walkToStation[1] + walkFromStation[1]) / 1000  # convert to meters to km
                 estwalk = (totalDistWalk * 1000) / (5000 / 60)  # avg walking speed 1.4m/min - 5km/hr
-                print("Time: " + str(round(totatTimeLRT + estwalk)) + " minutes" + "\nDistance: " +
-                      str(round((totalDistWalk + totalDistLRT), 2)) + " km\nTransfer: None.")
+                self.wlvariable4 = ("\nTime taken : " + str(round(totatTimeLRT + estwalk)) + " minutes")
+                self.wlvariable5 = ("\nDistance travelled: " + str(round((totalDistWalk + totalDistLRT), 2)) + " km\n")
+                self.wlvariable6 = ("Transfer: None.")
 
                 # plotting map to folium
                 folium.PolyLine(lrtfinal[0], color="red", weight=2, opacity=1).add_to(m)
@@ -343,4 +379,7 @@ class AstarWalkMrtAlgo:
                 # m.save('templates/astaralgo_walklrt.html')
                 m.save('templates/default.html')
 
-        print("--- %s seconds to run all calculations ---" % round((time.time() - start_time), 2))
+        self.wlvariable7 = ("Seconds to run all calculations: %s seconds" % round((time.time() - start_time), 2))
+
+    def printout2(self):
+        return [self.wlvariable, self.wlvariable1, self.wlvariable2, self.wlvariable3, self.wlvariable4, self.wlvariable5, self.wlvariable6, self.wlvariable7]

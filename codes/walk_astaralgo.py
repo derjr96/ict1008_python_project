@@ -2,6 +2,7 @@ import osmnx as ox
 import heapq
 import time
 import math
+import folium
 
 
 class AstarWalkAlgo:
@@ -10,7 +11,9 @@ class AstarWalkAlgo:
 
         self.src = s
         self.des = d
-
+        self.walkvariable = 0
+        self.walkvariable1 = 0
+        self.walkvariable2 = 0
         self.walkNodeList = walkNodeList
         self.walkEdgeList = walkEdgeList
 
@@ -33,6 +36,14 @@ class AstarWalkAlgo:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         dist = radius * c * 1000
         return dist
+
+    # conversion of route to coords
+    def convertRoute(self, coords):
+        output = []
+        for x in range(len(coords)):  # Parent Array
+            for i in range(len(coords[x])):  # Inner Array
+                output.append([coords[x][i][1], coords[x][i][0]])
+        return output
 
     # ASTAR ALGORITHM
     def walk_astar(self, start_point, end_point):
@@ -80,10 +91,8 @@ class AstarWalkAlgo:
 
     def generate(self):
         # main code
-
-        # storing all nodes into a list
-        self.walkNodeList = list(self.G_walk.nodes.values())
-        self.walkEdgeList = list(self.G_walk.edges.items())
+        punggol = (1.403948, 103.909048)
+        distance = 2000
 
         # user input (GUI TEAM, user input in text area will be stored here)
         # src = "Punggol"  # punggol will return punggol mrt coordinates
@@ -98,18 +107,29 @@ class AstarWalkAlgo:
         start_time = time.time()
         final = self.walk_astar(startosmid[0], endosmid[0])
         print("--- %s seconds ---" % round((time.time() - start_time), 2))
+        self.walkvariable = ("Time taken for run the algorithm: %s seconds" % round((time.time() - start_time), 2))
 
         # calculating estimated time to reach the destination taking avg human walking speed of 1.4m/s
         totaldist = final[1] + (startosmid[1] * 1000) + (endosmid[1] * 1000)
         estwalk = totaldist / (1.4 * 60)
         print("Time: " + str(round(estwalk)) + " minutes" + "\nDistance: " + str(round((totaldist / 1000), 2)) + " km")
+        self.walkvariable1 = ("Time taken: " + str(round(estwalk)) + " minutes") 
+        self.walkvariable2 = ("Distance travelled: " + str(round((totaldist / 1000), 2)) + " km")
 
         # plotting map to folium
-        m = ox.plot_route_folium(self.G_walk, final[0], route_color='#00008B', route_width=5, tiles="OpenStreetMap")
+        final[0] = self.convertRoute(ox.plot.node_list_to_coordinate_lines(self.G_walk, final[0]))
+
+        m = folium.Map(location=punggol, distance=distance, zoom_start=15, tiles="OpenStreetMap")
+        folium.Marker(startpoint, popup="start", icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.Marker(endpoint, popup="end", icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.PolyLine(([startpoint] + final[0] + [endpoint]), color="blue", weight=2, opacity=1).add_to(m)
+
         #m.save("templates/astar_walking.html")
         m.save("templates/default.html")
         print("Successfully overwrite default.html!!!")
 
+    def printout(self):
+        return [self.walkvariable, self.walkvariable1, self.walkvariable2]
 
 # aswa = AstarWalkAlgo("Punggol", "Blk 612, Punggol Drive, Punggol")
 # aswa.generate()

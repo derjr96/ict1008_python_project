@@ -3,12 +3,12 @@ import heapq
 import time
 
 
-def plotWalk(start, end):
+def plotWalk(G, start, end):
     startTime = time.time()
 
-    punggol = (1.4041070, 103.9025242)
-    distance = 3000
-    G = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
+    # punggol = (1.4041070, 103.9025242)
+    # distance = 3000
+    # G = ox.graph_from_point(punggol, distance=distance, truncate_by_edge=True, network_type='walk')
 
     # storing all nodes into a list
     edgeList = list(G.edges.items())
