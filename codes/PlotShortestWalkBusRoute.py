@@ -100,13 +100,13 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
     # Plot Final Graph
     m = folium.Map(location=punggol, distance=distance, zoom_start=15)
     if len(initialWalkToBusStop) > 0:
-        folium.PolyLine(initialWalkToBusStop, color="green", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(initialWalkToBusStop, color="blue", weight=4, opacity=1).add_to(m)
 
-    folium.PolyLine(busRouteToPlot, color="blue", weight=4, opacity=1).add_to(m)
+    folium.PolyLine(busRouteToPlot, color="purple", weight=4, opacity=1).add_to(m)
 
 
     if len(finalWalkFromBusStopToDestination) > 0:
-        folium.PolyLine(finalWalkFromBusStopToDestination, color="green", weight=4, opacity=1).add_to(m)
+        folium.PolyLine(finalWalkFromBusStopToDestination, color="blue", weight=4, opacity=1).add_to(m)
 
     # For creating the Markers on the map with: BUS STOP DATA, BUS SERVICES TO TAKE AT THAT STOP, BUSSTOP NAME
     with open('bus_data/all_bus_stops.json') as bus_stop:
@@ -148,12 +148,12 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
                     folium.Marker(location=[z['Latitude'], z['Longitude']], popup=folium.Popup
                     (("<div>" + z['Description'] + "</div>" + "Buses: " + str(busServices[count]).strip(
                         "[]").replace("'", '')), max_width=450),
-                                  icon=folium.Icon(color='red', icon='bus', prefix='fa')).add_to(m)
+                                  icon=folium.Icon(color='green', icon='bus', prefix='fa')).add_to(m)
             count = count + 1
 
         # Add Start and End Destination Markers
-        folium.Marker(location=startLocation, icon=folium.Icon(color='green', icon='play', prefix='fa')).add_to(m)
-        folium.Marker(location=endLocation, icon=folium.Icon(color='green', icon='stop', prefix='fa')).add_to(m)
+        folium.Marker(location=startLocation, icon=folium.Icon(color='red', icon='record')).add_to(m)
+        folium.Marker(location=endLocation, icon=folium.Icon(color='red', icon='record')).add_to(m)
 
         # Save as html file
         m.save('templates/default.html')

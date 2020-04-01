@@ -382,7 +382,7 @@ class WalkBusLrt:
 
                     paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
                     # bus = plotShortestBusRoute.findPath(G_bus, paths)
-                    bus = plotShortestBusRoute.findPath(paths)
+                    bus = plotShortestBusRoute.findPath(self.G_bus, paths)
 
                     walkFromBusStop = self.walk_astar(endLRTBusStopNode.id, endpt[0])
 
@@ -526,7 +526,7 @@ class WalkBusLrt:
 
                     paths = findShortestBusRoute.findShortestBusRoute(int(endLRTBusStopCode), int(endBusStopCode))
                     # bus = plotShortestBusRoute.findPath(G_bus, paths)
-                    bus = plotShortestBusRoute.findPath(paths)
+                    bus = plotShortestBusRoute.findPath(self.G_bus, paths)
 
                     walkFromBusStop = self.walk_astar(endBusStopNode.id, endpt[0])
 
