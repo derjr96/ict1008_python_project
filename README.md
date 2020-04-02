@@ -77,7 +77,7 @@
 
 #### Installing Required Dependencies
 
-In your pycharm terminal tab:
+In your terminal tab:
 *     pip install overpy
 *     pip install Flask
 *     pip install heapq
