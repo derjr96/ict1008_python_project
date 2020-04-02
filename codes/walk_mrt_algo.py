@@ -105,7 +105,7 @@ class AstarWalkMrtAlgo:
         stat = []
         strt = 0
 
-        # finding start station
+        # finding start station - will run for Complexity: O(N)
         if use == "no":
             for k in self.mrtEdgeList:
                 h = self.heuristic(self.mrtn_latlon(start_point), self.mrtn_latlon(k[0][1]))
@@ -119,6 +119,7 @@ class AstarWalkMrtAlgo:
         heapq.heappush(routeq, (0, 0, None, strt))
         closepath[strt] = None
 
+        # while loop will run for V amount on times which is how many vertex to reach the end point - Complexity: O(V)
         while True:
             temp = heapq.heappop(routeq)
 
@@ -140,6 +141,7 @@ class AstarWalkMrtAlgo:
                 finalret.append(temp[1])
                 return finalret
             else:
+                # with heapq, dijkstra and heuristic, it will run based on the number of edges for Complexity of O(LogE)
                 for i in self.mrtEdgeList:
                     if i[0][0] == temp[3]:
                         if i[0][1] in closepath:
@@ -163,6 +165,7 @@ class AstarWalkMrtAlgo:
         heapq.heappush(routeq, (0, 0, None, start_point))
         closepath[start_point] = None
 
+        # while loop will run for V amount on times which is how many vertex to reach the end point - Complexity: O(V)
         while True:
             temp = heapq.heappop(routeq)
             # check if we reach end point node
@@ -183,6 +186,7 @@ class AstarWalkMrtAlgo:
                 finalret.append(temp[1])
                 return finalret
             else:
+                # with heapq, dijkstra and heuristic, it will run based on the number of edges for Complexity of O(LogE)
                 for i in self.walkEdgeList:
                     if i[0][0] == temp[3]:
                         if i[0][1] in closepath:
@@ -227,11 +231,11 @@ class AstarWalkMrtAlgo:
         strtpt = ox.get_nearest_node(self.G_walk, startpoint, method='euclidean', return_dist=True)
         endpt = ox.get_nearest_node(self.G_walk, endpoint, method='euclidean', return_dist=True)
 
-        # locateStrtLrt and lcoateEndLrt is only used to locate the location of both mrt
+        # locateStrtLrt and locateEndLrt is only used to locate the location of both mrt
         locateStrtLrt = ox.get_nearest_node(self.G_lrt, startpoint, method='euclidean', return_dist=True)
-        lcoateEndLrt = ox.get_nearest_node(self.G_lrt, endpoint, method='euclidean', return_dist=True)
+        locateEndLrt = ox.get_nearest_node(self.G_lrt, endpoint, method='euclidean', return_dist=True)
         lrtstart = self.lrt_nearnode(locateStrtLrt[0])[1]
-        lrtend = self.lrt_nearnode(lcoateEndLrt[0])[1]
+        lrtend = self.lrt_nearnode(locateEndLrt[0])[1]
 
         # testing algorithmn speed
         start_time = time.time()
