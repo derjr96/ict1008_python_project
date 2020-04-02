@@ -134,6 +134,9 @@ def create_graph(lrt_response_json, name='unnamed', retain_all=True, bidirection
     return G
 
 
+# testing start up speed
+starttime = time.time()
+
 print("Running Creation of MultiDiGraph...")
 punggol = (1.403948, 103.909048)
 distance = 2000
@@ -191,6 +194,8 @@ addr.append('Punggol')
 addr = addr[::-1]
 
 print("Autofill list Created!")
+
+print("Seconds to run all calculations: %s seconds" % round((time.time() - starttime), 2))
 
 from codes import routes
 
