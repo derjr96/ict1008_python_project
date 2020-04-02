@@ -119,13 +119,27 @@ Implementing and plotting network
 ## Collaborators with Contributions
 **TEAM 1-2** 
 
-1. **Darrell Er** | [@derjr96](https://github.com/derjr96) | Dijkstra and A* Algorithm, MRT + Walk & Walk
-2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) | Bus + Walk
-3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan) | GUI
-4. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious) | GUI
-5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard) | GUI, Video & Poster
-6. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr) | GUI
+1. **Darrell Er** | [@derjr96](https://github.com/derjr96)
+   * Dijkstra Algorithm
+   * A* Algorithm
+   * Walk + Bus + Lrt Network
+   * Walk + MRT Network
+   * Walk Network
+   * GitHub Repo
+2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) 
+   * Walk + Bus + Lrt Network
+   * Walk + Bus Network
+3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan)
+   * GUI
+4. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious)
+   * GUI
+5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard)
+   * GUI
+   * Video
+   * Poster
+6. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr)
+   * GUI
 
 ## Credit
 * Geoff Boeing - [OSMnx](https://github.com/gboeing/osmnx) | Creator of OSMnx
-* LTA - [LTA](https://www.lta.gov.sg/content/ltagov/en.html) | Fare Calculator and Average waiting time for train
+* LTA - [LTA](https://www.lta.gov.sg/content/ltagov/en.html) | Fare Calculator, Average waiting time for train and bus routing
