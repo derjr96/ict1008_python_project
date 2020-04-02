@@ -315,11 +315,11 @@ class AstarWalkMrtAlgo:
                 waitTime = 0
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
-                    waitTime = 3
+                    waitTime = 5
                     self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
-                    waitTime = 7
+                    waitTime = 8
                     self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
@@ -372,11 +372,11 @@ class AstarWalkMrtAlgo:
                 waitTime = 0
                 if "10" > timenow > "6":
                     print("--- PEAK HOUR ---")
-                    waitTime = 3
+                    waitTime = 5
                     self.wlvariable = "--- PEAK HOUR ---"
                 else:
                     print("--- NON-PEAK HOUR ---")
-                    waitTime = 7
+                    waitTime = 8
                     self.wlvariable = "--- NON-PEAK HOUR ---"
                 self.lrtFareCal(totalDistLRT)  # call fare function
                 numStation = math.floor(totalDistLRT / statDist + 2)
