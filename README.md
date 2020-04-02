@@ -128,3 +128,4 @@ Implementing and plotting network
 
 ## Credit
 * Geoff Boeing - [OSMnx](https://github.com/gboeing/osmnx) | Creator of OSMnx
+* LTA - [LTA](https://www.lta.gov.sg/content/ltagov/en.html) | Fare Calculator and Average waiting time for train
