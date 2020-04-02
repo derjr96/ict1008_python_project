@@ -32,10 +32,11 @@ def dijkstra(start_point, end_point, edgeList):
     path = []
     routeQueue = []
 
-    # pushing start point into heapq queue
+    # pushing start point into heapq queue (heuristic, length(dist), parent(key), current(value))
     heapq.heappush(routeQueue, (0, None, start_point))
     closepath[start_point] = None
 
+    # while loop will run for V amount on times which is how many vertex to reach the end point - Complexity: O(V)
     while True:
         temp = heapq.heappop(routeQueue)
         # print(temp[0], temp[1], temp[2])
@@ -51,6 +52,7 @@ def dijkstra(start_point, end_point, edgeList):
             path = path[::-1]
             return path
 
+        # with heapq, dijkstra, it will run based on the number of edges for Complexity of O(LogE)
         for i in range(0, len(edgeList)):
             if edgeList[i][0][0] == temp[2]:
                 if edgeList[i][0][1] in closepath:
