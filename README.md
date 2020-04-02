@@ -127,6 +127,7 @@ Implementing and plotting network
    * Walk Network
    * GitHub Repo
 2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) 
+   * Dijkstra Algorithm
    * Walk + Bus + Lrt Network
    * Walk + Bus Network
 3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan)
