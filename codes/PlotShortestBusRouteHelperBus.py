@@ -26,6 +26,7 @@ def findPath(G, paths):
     with open('data/Punggol_Bus_Stops.json') as bus_stop:
         data = json.load(bus_stop)
 
+        # Complexity of O(n^2) n number of paths, n number of busstops in .json
         for i in paths:
             for x in data['punggolBusStops']:
                 if i == int(x['BusStopCode']):
@@ -34,12 +35,14 @@ def findPath(G, paths):
                     break
 
     # Retriving the long and lat of the nodes
+    # Complexity of O(n) n number of nodes
     for i in range(len(listOfNodes)):
         if i != (len(listOfNodes) - 1):
             listOfTuplesStartEndLatLon.append(((float(listOfNodes[i][0]), float(listOfNodes[i][1])),
                                                (float(listOfNodes[i + 1][0]), float(listOfNodes[i + 1][1]))))
 
     # Retriving of all routes(edges) to plot route
+    # Complexity of O(n) n number of tuples of StartEnds
     for i in range(len(listOfTuplesStartEndLatLon)):
         route.extend(nx.shortest_path(G, (
             ox.get_nearest_edge(G, (listOfTuplesStartEndLatLon[i][0][0], listOfTuplesStartEndLatLon[i][0][1])))[2], (

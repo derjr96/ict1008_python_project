@@ -100,6 +100,8 @@ def findShortestBusRoute(startBusStopCode, endBusStopCode):
         # To create edges on dijkstra graph, the tuple consists of ( SRC, DEST, Dist)
         tupleProcessed = []
         df = pd.read_csv("data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Distance'])
+
+        # Complexity O(n) for number of rows in the csv
         for x in df.values:
             if math.isnan(x[0]):
                 pass

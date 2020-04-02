@@ -41,6 +41,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
 
     # Find busstop to walk to (starts from range 50m, increases till find a busstop) , retrieve its busstopCode, latlon
     # Uses overpass api
+    # Complexity of O(n) Run n times until startBusStopNode is not none
     while (startBusStopNode == None):
         startBusStopNode = api.query(
             "node(around:" + str(radius) + "," + startLocation[0] + "," + startLocation[
@@ -55,6 +56,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
             radius += 50
 
     # Find path of INITIAL WALK to BUS STOP
+    # Complexity of should be O(n)
     try:
         initialWalkToBusStop = plotShortestWalkRoute.plotWalk(W, startLocation, startBusStopLatLon)
     except:
@@ -65,6 +67,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
 
     # Find Dest busstop from final dest (starts from range 50m, increases till find a busstop) , retrieve its busstopCode, latlon
     # Uses overpass api
+    # Complexity of O(n) Run n times until endBusStopNode is not none
     while (endBusStopNode == None):
         endBusStopNode = api.query(
             "node(around:" + str(radius) + "," + endLocation[0] + "," + endLocation[
@@ -79,12 +82,14 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
             radius += 100
 
     # Find path of FINAL WALK from Dest BUS STOP to DESTINATION
+    # Complexity of should be O(n)
     try:
         finalWalkFromBusStopToDestination = plotShortestWalkRoute.plotWalk(W, endBusStopLatLon, endLocation)
     except:
         print("Cannot find walk route.")
 
     # Find path of BUS ROUTE
+    # Complexity of O(n^2)
     try:
         paths = findShortestBusRoute.findShortestBusRoute(int(startBusStopCode), int(endBusStopCode))
         busRouteToPlot = plotShortestBusRoute.findPath(D, paths)
@@ -124,10 +129,12 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
         tupleProcessed = []
         busServices = []
 
+        # Complexity of O(n) n number of paths-1
         for i in range(len(paths) - 1):
             tupleOfPairs.append((paths[i], paths[i + 1]))
 
         df = pd.read_csv("data/Bus_Edge_Direction_1.csv", usecols=['BusStop A', 'BusStop B', 'Service(s)'])
+        # Complexity of O(n) number of values in direction csv file
         for x in df.values:
             if math.isnan(x[0]):
                 pass
@@ -138,6 +145,7 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
                         break
 
         # To get bus services
+        # Complexity of O(n^2) n number of paths, n number of values in tupleProcessed
         for i in paths:
             busServices.append([])
             for z in tupleProcessed:
@@ -145,10 +153,12 @@ def plotShortestWalkBus(W, D, startLocation, endLocation):
                     busServices[counter2].extend(z[2].split(','))
             counter2 = counter2 + 1
 
+        # Complexity of O(n) n number of bus services
         for i in range(len(busServices)):
             busServices[i] = plotShortestBusRoute.removeDupes(busServices[i])
 
         # Create the marker nodes with the bus services to visualize on map
+        # Complexity of O(n) number of paths
         for i in paths:
             for z in data['value']:
                 if int(z['BusStopCode']) == paths[count]:
