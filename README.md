@@ -93,7 +93,7 @@ In your pycharm terminal tab:
 
 * [Python 3.7](https://docs.python.org/3.7/) - Language used
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/) - The web framework used
-* [Geopy](https://geopy.readthedocs.io/en/stable/) - Used for geocoding and reverse geocoding
+* [Geopy](https://geopy.readthedocs.io/en/stable/) - Nominatim | Used for geocoding and reverse geocoding
 * [Folium](https://python-visualization.github.io/folium/) - Used for rendering of map
 * [Osmnx](https://osmnx.readthedocs.io/en/stable/) - Graph creation
 
