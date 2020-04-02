@@ -9,7 +9,7 @@
     * [Installing OSMnx](#installing-osmnx)
     * [Installing Required Dependencies](#installing-required-dependencies)
 * [Running Application](#running-application)
-* [Built With](#built-with)
+* [Developed Withh](#developed-with)
 * [Project Details](#project-details)
 * [Milestones](#milestones)
 * [Collaborators with Contributions](#collaborators-with-contributions)
@@ -31,15 +31,15 @@
 
 2. Use the terminal or an Anaconda Prompt for the following steps:
 
-* Create the environment from the environment.yml file:
+   1. Create the environment from the environment.yml file:
 
-  1.      conda env create -f environment.yml
+          conda env create -f environment.yml
 
-  The first line of the yml file sets the new environment's name. For details see Creating an environment file manually.
+   The first line of the yml file sets the new environment's name. For details see Creating an environment file manually.
 
-  2. Activate the new environment: conda activate myenv
+   2. Activate the new environment: conda activate myenv
 
-  3. Verify that the new environment was installed correctly:
+   3. Verify that the new environment was installed correctly:
 
           conda env list
       
@@ -85,21 +85,24 @@ In your pycharm terminal tab:
 
 ## Running Application
 
+**How to run the application:**
+
     Run the python file "run.py"
     
 **Do take note that the application will take awhile to start up. Due to the creations of multi-dimensional graphs**
 
-## Built With
+## Developed With
 
 * [Python 3.7](https://docs.python.org/3.7/) - Language used
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/) - The web framework used
 * [Geopy](https://geopy.readthedocs.io/en/stable/) - Nominatim | Used for geocoding and reverse geocoding
 * [Folium](https://python-visualization.github.io/folium/) - Used for rendering of map
 * [Osmnx](https://osmnx.readthedocs.io/en/stable/) - Graph creation
+* [LTADataMall](https://www.mytransport.sg/content/mytransport/home/dataMall.html) - Bus routes
 
 ## Project Details
 
-Implementing and plotting network
+Implementing and plotting of networks
 * [X] **Walk Network**
 * [X] **Walk + Bus Network**
 * [X] **Walk + LRT Network**
@@ -126,19 +129,19 @@ Implementing and plotting network
    * Walk + MRT Network
    * Walk Network
    * GitHub Repo
-2. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) 
+1. **Alwyn Sim** | [@xiaoShiroNeko](https://github.com/xiaoShiroNeko) 
    * Dijkstra Algorithm
    * Walk + Bus + Lrt Network
    * Walk + Bus Network
-3. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan)
+1. **Yong Quan** | [@ongyongquan](https://github.com/ongyongquan)
    * GUI
-4. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious)
+1. **Yee Yong Jian** | [@thedomilicious](https://github.com/thedomilicious)
    * GUI
-5. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard)
+1. **Reynard Lim** | [@L2eynard](https://github.com/L2eynard)
    * GUI
    * Video
    * Poster
-6. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr)
+1. **Syaifulnizar** | [@syaifulnizarrr](https://github.com/syaifulnizarrr)
    * GUI
 
 ## Credit
