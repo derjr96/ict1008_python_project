@@ -11,6 +11,7 @@
     * [Installing OSMnx](#installing-osmnx)
     * [Installing Required Dependencies](#installing-required-dependencies)
 * [Running Application](#running-application)
+* [Application Demo Video](#application-demo-video)
 * [Developed Withh](#developed-with)
 * [Project Details](#project-details)
 * [Milestones](#milestones)
@@ -99,7 +100,9 @@ In your terminal tab:
     
 **Do take note that the application will take awhile to start up. Due to the creations of multi-dimensional graphs**
 
-[![Watch the video](http://i.imgur.com/H3cJU7I.jpg)](https://www.youtube.com/watch?v=omgGMMr1BSA)
+## Application Demo Video
+
+[![Watch the video](https://github.com/derjr96/ict1008_python_project/blob/master/medias/screenpic.PNG)](https://www.youtube.com/watch?v=omgGMMr1BSA)
 
 ## Developed With
 
