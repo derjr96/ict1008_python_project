@@ -99,6 +99,8 @@ In your terminal tab:
     
 **Do take note that the application will take awhile to start up. Due to the creations of multi-dimensional graphs**
 
+[![Watch the video](http://i.imgur.com/H3cJU7I.jpg)](https://www.youtube.com/watch?v=omgGMMr1BSA)
+
 ## Developed With
 
 * [Python 3.7](https://docs.python.org/3.7/) - Language used
@@ -125,7 +127,7 @@ Implementing and plotting of networks
 * [X] Debugging
 * [X] Code Cleanup
 * [X] Poster
-* [ ] Video
+* [X] Video
 
 ## Collaborators with Contributions
 **TEAM 1-2** 
