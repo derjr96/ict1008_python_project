@@ -25,8 +25,6 @@
 
 ### Installing Environment
 
-![alt text](https://github.com/derjr96/ict1008_python_project/blob/master/medias/anacondaNavigatorHome.PNG "Anaconda Navigator Home")
-
     Recommended to create environment from environment.yml, if this does not work, you would have to do it manually
 
 #### With the use of a YML file
