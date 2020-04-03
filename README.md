@@ -1,5 +1,7 @@
 # ICT1008 Python Project (DSA)<!-- omit in toc -->
 
+![alt text](https://github.com/derjr96/ict1008_python_project/blob/master/static/TeamLogo.jpg "Path Find Team Logo")
+
 ## Table of Contents <!-- omit in toc -->
 * [Path Find](#path-find)
 * [Getting Started](#getting-started)
@@ -23,13 +25,19 @@
 
 ### Installing Environment
 
+![alt text](https://github.com/derjr96/ict1008_python_project/blob/master/medias/anacondaNavigatorHome.PNG "Anaconda Navigator Home")
+
     Recommended to create environment from environment.yml, if this does not work, you would have to do it manually
 
 #### With the use of a YML file
 
 1. [Install](https://www.anaconda.com/distribution/) Anaconda for Python 3.7. (Ensure you have Anaconda first)
 
+![alt text](https://github.com/derjr96/ict1008_python_project/blob/master/medias/downloadingConda.PNG "Downloading Anaconda")
+
 2. Use the terminal or an Anaconda Prompt for the following steps:
+
+![alt text](https://github.com/derjr96/ict1008_python_project/blob/master/medias/installingOSMnx.png "Opening Terminal in Conda")
 
    1. Create the environment from the environment.yml file:
 
