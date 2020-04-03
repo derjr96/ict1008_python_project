@@ -102,7 +102,7 @@ In your terminal tab:
 
 ## Application Demo Video
 
-[![Watch the video](https://github.com/derjr96/ict1008_python_project/blob/master/medias/screenpic.PNG)](https://www.youtube.com/watch?v=omgGMMr1BSA)
+[![Watch the video](https://github.com/derjr96/ict1008_python_project/blob/master/medias/screenpic.PNG "Click here to watch the video")](https://www.youtube.com/watch?v=omgGMMr1BSA)
 
 ## Developed With
 
